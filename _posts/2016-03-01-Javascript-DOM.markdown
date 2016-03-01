@@ -2,7 +2,7 @@
 layout: article
 title: "Javascript DOM"
 date: 2016-03-01 16:29:19 +0800
-categories: develop
+categories: development
 ---
 
 Handling DOM is one of the basic usage of JavaScript. The Document Object Model(DOM) is a platform- and language-neutral interface that will allow programs and scripts to dynamically access and update the content, structure and style of documents.
