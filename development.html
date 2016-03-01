@@ -1,0 +1,23 @@
+---
+layout: index
+title: Development
+permalink: /development/
+---
+
+<ul class="item">
+  {% for post in site.categories.develop %}
+    <li>
+
+      <header>
+        <h2 class="title">
+          <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+        </h2>
+        <p class="date">{{ post.date | date: "%-d %b %Y" }}</p>
+      </header>
+
+      <div class="excerpt">{{ post.excerpt }}</div>
+      <p class="more"><a href="{{ post.url | prepend: site.baseurl }}">READ MORE →</a></p>
+
+    </li>
+  {% endfor %}
+</ul>

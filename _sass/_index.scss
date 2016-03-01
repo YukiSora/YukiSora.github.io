@@ -1,0 +1,65 @@
+@mixin a() {
+  a {
+    color: white;
+    text-decoration: none;
+
+    &:hover {
+      color: #66ccff;
+      text-decoration: underline;
+    }
+  }
+}
+
+.index {
+  min-height: 500px;
+  margin: 0px;
+  padding: 0px;
+
+  .item {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+    list-style-image: none;
+
+    li {
+      margin-bottom: 50px;
+      padding: 20px;
+      overflow: hidden;
+      font-size: 20px;
+      border-bottom: 3px solid gray;
+
+      header {
+        margin: 40px 0px;
+
+        .title {
+          font-size: 40px;
+
+          @include a();
+        }
+
+        .date {
+          text-align: right;
+        }
+      }
+
+      .excerpt {
+        text-align: justify;
+        min-height: 200px;
+      }
+
+      .more {
+        text-align: right;
+
+        @include a();
+      }
+    }
+  }
+
+  code {
+    border-radius: 0px;
+    color: white;
+    background-color: #23241f;
+    font-family: 'Droid Sans Mono', 'Courier New', 'Consolas', 'Courier';
+    font-size: 20px;
+  }
+}

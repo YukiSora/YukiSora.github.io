@@ -1,0 +1,195 @@
+.article {
+  min-height: 500px;
+
+  header {
+    margin: 48px 0px;
+
+    p {
+      text-align: right;
+    }
+  }
+
+  h1 {
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  h2 {
+    margin: 40px 0px;
+    padding-right: 30px;
+    border-bottom: 1px solid #c69;
+    color: #c69;
+    font-size: 40px;
+    font-weight: bold;
+  }
+
+  h3 {
+    margin: 32px 0px;
+    color: #699;
+    font-size: 32px;
+    font-weight: bold;
+  }
+
+  h4 {
+    margin: 28px 0px;
+    color: #669;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  h5 {
+    margin: 24px 0px;
+    color: #cc9;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  h6 {
+    margin: 20px 0px;
+    color: #9c9;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  p {
+    margin: 20px;
+    font-size: 20px;
+    text-align: justify;
+  }
+
+  a {
+    color: #66ccff;
+
+    &:hover {
+      color: #66ccff;
+      text-decoration: underline;
+    }
+  }
+
+  ul, ol {
+    font-size: 20px;
+    margin: 20px;
+
+    li {
+      margin: 20px 0px;
+      padding-left: 20px;
+
+      ul {
+        margin: 20px 0px;
+      }
+
+      p {
+        margin: 20px 0px;
+      }
+    }
+  }
+
+  table {
+    width: 95%;
+    width: calc(100% - 40px);
+    margin: 20px auto;
+    border-collapse: collapse;
+    table-layout: fixed;
+    background-color: #23241f;
+
+    th {
+      font-weight: bold;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid black;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    tr:hover {background-color: #555}
+  }
+
+  img {
+    display: block;
+    margin: 20px auto;
+    max-width: 80%;
+    border-radius: 3px;
+    transition: 0.2s max-width ease;
+
+    &:hover {
+      max-width: 100%;
+    }
+  }
+
+  pre {
+    margin: 20px;
+    padding: 10px 10px;
+    background-color: #23241f;
+  }
+
+  code {
+    border-radius: 0px;
+    color: white;
+    background-color: #23241f;
+    font-family: 'Droid Sans Mono', 'Courier New', 'Consolas', 'Courier';
+    font-size: 20px;
+  }
+
+  hr {
+    margin: 100px 0px;
+    border: 4px double #8c8b8b;
+  	text-align: center;
+
+    &:after {
+    	display: inline-block;
+    	position: relative;
+    	top: -16px;
+      margin: 0px;
+    	padding: 0 10px;
+      color: white;
+    	background-color: #333;
+    	font-size: 20px;
+      content: 'poi';
+    }
+  }
+
+  blockquote {
+    background: #23241f;
+    border-left: 10px solid #ccc;
+    margin: 20px;
+    padding: 10px;
+
+    &:before {
+      color: #ccc;
+      content: open-quote;
+      font-size: 80px;
+      line-height: 1px;
+      margin-right: 20px;
+      vertical-align: -32px;
+    }
+
+    &:after {
+      color: #ccc;
+      content: close-quote;
+      font-size: 80px;
+      line-height: 1px;
+      margin-left: 20px;
+      vertical-align: -32px;
+    }
+
+    & p {
+      display: inline;
+    }
+  }
+
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sup { 
+    top: -0.5em;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+}

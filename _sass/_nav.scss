@@ -1,0 +1,175 @@
+@mixin block-center() {
+  display: inline-block;
+  float: none;
+  vertical-align: top;
+}
+
+#main-nav {
+  //Navbar
+  margin: 0px;
+  height: 700px;
+  border: none;
+  border-radius: 0px;
+  //yande.re 284228
+  background: #444 url(/image/nav-background.png) center no-repeat;
+  font-size: 1.5em;
+  transition: height 0.2s linear;
+  box-shadow: 0px 0px 2px gray;
+  padding: 0px;
+
+  .navbar-center {
+    text-align: center;
+
+    .navbar-nav {
+      @include block-center();
+
+      a {
+        color: white;
+        transition: color 0.3s ease;
+
+        //text
+        position: relative;
+        text-decoration: none;
+
+        &:before {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 2px;
+          bottom: 0;
+          left: 0;
+          background-color: #fff;
+          visibility: hidden;
+          transform: scaleX(0);
+          transition: all 0.3s ease-in-out 0s;
+        }
+
+        &:hover {
+          color: #555;
+
+          &:before {
+            background-color: #555;
+            visibility: visible;
+            transform: scaleX(1);
+          }
+        }
+      }
+    }
+  }
+
+  &.shrink {
+    height: 50px;
+  }
+
+  //Profile image and text
+  .profile-center {
+    text-align: center;
+    margin-top: 150px;
+
+    .profile-div {
+      @include block-center();
+    }
+
+    .profile-img {
+      width: 200px;
+      border: 0xp solid gray;
+      border-radius: 200px;
+      transition: transform 0.2s ease;
+
+      &:hover {
+          animation: shak 1s infinite;
+      }
+    }
+
+    .profile-text {
+      color: #ccc;
+      transition: color 0.5s ease;
+
+      &:hover {
+          animation: rainbow-text 2s infinite;
+      }
+    }
+  }
+}
+
+.display-none {
+  display: none;
+}
+
+.display-block {
+  animation: fade-in 0.8s;
+  display: block;
+}
+
+#body.body-padding-top {
+  padding-top: 150px;
+}
+
+@keyframes shak {
+    0%, 100% {
+        transform: rotate(15deg);
+    }
+    50% {
+        transform: rotate(-15deg);
+    }
+}
+
+@keyframes rainbow-text {
+  0%, 100% {
+    color: #555555;
+  }
+
+  5%, 95% {
+    color: #555566;
+  }
+
+  10%, 90% {
+    color: #556677;
+  }
+
+  15%, 85% {
+    color: #556688;
+  }
+
+  20%, 80% {
+    color: #557799;
+  }
+
+  25%, 75% {
+    color: #6677aa;
+  }
+
+  30%, 70% {
+    color: #6688bb;
+  }
+
+  35%, 65% {
+    color: #6699cc;
+  }
+
+  40%, 60% {
+    color: #66aadd;
+  }
+
+  45%, 55% {
+    color: #66bbee;
+  }
+
+  50% {
+    color: #66ccff;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

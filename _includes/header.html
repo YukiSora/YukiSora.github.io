@@ -1,20 +1,25 @@
-<header class="site-header">
+<nav class="navbar navbar-dark bg-inverse navbar-fixed-top" id="main-nav">
 
-  <div class="wrapper">
-
-    <a class="site-title" href="{{ site.baseurl }}/">{{ site.title }}</a>
-
-    <nav class="site-nav">
-
-      <div class="trigger">
-        {% for my_page in site.pages %}
-          {% if my_page.title %}
-          <a class="page-link" href="{{ my_page.url | prepend: site.baseurl }}">{{ my_page.title }}</a>
-          {% endif %}
-        {% endfor %}
-      </div>
-    </nav>
-
+  <div class="navbar-center">
+    <ul class="nav navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ site.baseurl }}/">YukiSora</a>
+      </li>
+      {% for my_page in site.pages %}
+        {% if my_page.title %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ my_page.url | prepend: site.baseurl }}">{{ my_page.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
   </div>
 
-</header>
+  <div class="profile-center display-block" id="profile">
+    <div class="profile-block">
+      <img src="/image/profile.gif" alt="profile" class="profile-img" />
+      <h1 class="profile-text">{{ site.title }}</h1>
+    </div>
+  </div>
+
+</nav>
