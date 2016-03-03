@@ -85,3 +85,4 @@ Table is extended Markdown syntax.
 | - | - |
 | Item One | Item Two |
 ```
+---
