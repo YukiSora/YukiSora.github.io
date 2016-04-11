@@ -148,6 +148,8 @@ public class Poi {
 
 The URL class has several methods that retrieve data from a URL.
 
+##### openStream
+
 {% highlight java %}
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -173,6 +175,8 @@ public class Poi {
     }
 }
 {% endhighlight %}
+
+##### openConnection
 
 {% highlight java %}
 import java.net.URL;
@@ -201,6 +205,8 @@ public class Poi {
     }
 }
 {% endhighlight %}
+
+##### getContent
 
 {% highlight java %}
 import java.net.URL;
@@ -466,7 +472,7 @@ public class Poi {
 
 #### Writing to Server
 
-writing data to server by using socket client.
+Writing data to server by using socket client.
 
 {% highlight java %}
 import java.net.Socket;
@@ -756,7 +762,7 @@ public class Poi {
 
 The UDP is an alternative transport layer protocol for sending data over IP that is very quick, but not reliable.
 
-### UDP client
+### UDP Client
 
 Client requests data from server and gets response from server.
 
