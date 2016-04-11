@@ -5,7 +5,7 @@ date: 2016-03-31 10:10:33 +0800
 categories: development
 ---
 
-The key points of Java Network Programming. Connect to network by using URL class and Socket class.
+The key points of Java Network Programming. Connect to network by using URL class, Socket class and UDP class.
 
 ## Internet Addresses
 
@@ -328,6 +328,8 @@ public class Poi {
 
 ### Writing Data to a Server
 
+Post data to serve like send the form.
+
 {% highlight java %}
 import java.net.URL;
 import java.net.URLConnection;
@@ -418,6 +420,400 @@ public class Poi {
            System.out.println(cookie.getName());
            System.out.println(cookie.getValue());
        }
+    }
+}
+{% endhighlight %}
+
+---
+
+## Socket
+
+A socket is a connection between two hosts.
+
+### Socket for Client
+
+Socket for client require data from server.
+
+#### Reading from Server
+
+Reading data from server by using socket client.
+
+{% highlight java %}
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import java.io.InputStream;
+import java.io.IOException;
+
+public class Poi {
+    public static void main(String[] args) {
+        try (Socket socket = new Socket("time.nist.gov", 13)) {
+            socket.setSoTimeout(10000);
+            try (InputStream in = socket.getInputStream()) {
+                int c;
+                while ((c = in.read()) != -1) {
+                    System.out.write(c);
+                }
+            }
+        } catch (UnknownHostException e) {
+            System.out.println("Unknow Host");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+}
+{% endhighlight %}
+
+#### Writing to Server
+
+writing data to server by using socket client.
+
+{% highlight java %}
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
+
+public class Poi {
+    public static void main(String[] args) {
+       try (Socket socket = new Socket("dict.org", 2628)) {
+           socket.setSoTimeout(10000);
+
+           OutputStream out = socket.getOutputStream();
+           String s = "DEFINE fd-eng-iri apple\r\n";
+           for (int i = 0; i < s.length(); i++) {
+               out.write(s.charAt(i));
+           }
+
+           InputStream in = socket.getInputStream();
+           int c;
+           while ((c = in.read()) != -1) {
+               System.out.write(c);
+           }
+       } catch (UnknownHostException e) {
+           System.out.println("Unknow Host");
+       } catch (IOException e) {
+           System.out.println(e);
+       }
+    }
+}
+{% endhighlight %}
+
+#### Nonblocking IO Client
+
+Reading data from server by using nonblocking IO technique.
+
+{% highlight java %}
+import java.net.Socket;
+import java.net.InetSocketAddress;
+
+import java.io.IOException;
+
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
+
+public class Poi {
+    public static void main(String[] args) {
+        try {
+            SocketChannel client = SocketChannel.open(new InetSocketAddress("time.nist.gov", 13));
+            ByteBuffer buffer = ByteBuffer.allocate(128);
+            WritableByteChannel out = Channels.newChannel(System.out);
+            while (client.read(buffer) != -1) {
+                buffer.flip();
+                out.write(buffer);
+                buffer.clear();
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+}
+{% endhighlight %}
+
+### Socket for Server
+
+Socket for server provides data for client.
+
+#### Single Threaded Server
+
+Open new connection only when the old one is closed.
+
+{% highlight java %}
+import java.net.Socket;
+import java.net.ServerSocket;
+
+import java.io.OutputStream;
+import java.io.IOException;
+
+public class Poi {
+    public static void main(String[] args) {
+        try (ServerSocket server = new ServerSocket(2333)) {
+            while (true) {
+                try (Socket connection = server.accept()) {
+                    OutputStream out = connection.getOutputStream();
+                    String s = "poi\r\n";
+                    for (int i = 0; i < s.length(); i++) {
+                        out.write(s.charAt(i));
+                    }
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+}
+{% endhighlight %}
+
+#### Multi Threaded Server
+
+Maximum open 50 connection at the same time by using thread pool.
+
+{% highlight java %}
+import java.net.Socket;
+import java.net.ServerSocket;
+
+import java.io.OutputStream;
+import java.io.IOException;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Callable;
+
+public class Poi {
+    public static void main(String[] args) {
+        ExecutorService pool = Executors.newFixedThreadPool(50);
+
+        try (ServerSocket server = new ServerSocket(2333)) {
+            while (true) {
+                try {
+                    Socket connection = server.accept();
+                    Callable<Void> task = new ServerThread(connection);
+                    pool.submit(task);
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    private static class ServerThread implements Callable<Void> {
+        private Socket connection;
+
+        ServerThread(Socket connection) {
+            this.connection = connection;
+        }
+
+        @Override
+        public Void call() {
+            try {
+                OutputStream out = connection.getOutputStream();
+                String s = "poi\r\n";
+                for (int i = 0; i < s.length(); i++) {
+                    out.write(s.charAt(i));
+                }
+            } catch (IOException e) {
+                System.out.println(e);
+            } finally {
+                try {
+                    connection.close();
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+            }
+
+            return null;
+        }
+    }
+}
+{% endhighlight %}
+
+#### Reading from Client
+
+Reading data from the post was sent by client.
+
+{% highlight java %}
+import java.net.Socket;
+import java.net.ServerSocket;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
+
+public class Poi {
+    public static void main(String[] args) {
+        try (ServerSocket server = new ServerSocket(2333)) {
+            while (true) {
+                try (Socket connection = server.accept()) {
+                    while (true) {
+                        InputStream in = connection.getInputStream();
+                        OutputStream out = connection.getOutputStream();
+                        int c;
+                        while ((c = in.read()) != '\r') {
+                            System.out.write(c);
+                            out.write(c);
+                        }
+                        System.out.write(in.read());
+                        String s = " poi\r\n";
+                        for (int i = 0; i < s.length(); i++) {
+                            out.write(s.charAt(i));
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+}
+{% endhighlight %}
+
+#### Nonblocking IO Server
+
+Writing data to client by using nonblocking IO technique.
+
+{% highlight java %}
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.Selector;
+import java.nio.channels.SelectionKey;
+
+import java.net.InetSocketAddress;
+
+import java.io.IOException;
+
+import java.util.Iterator;
+
+public class Poi {
+    public static void main(String[] args) {
+        ServerSocketChannel serverChannel = null;
+        Selector selector = null;
+        try {
+            serverChannel = ServerSocketChannel.open();
+            serverChannel.bind(new InetSocketAddress(2333));
+            serverChannel.configureBlocking(false);
+            selector = Selector.open();
+            serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+        } catch (IOException e) {
+            System.out.println(e);
+            return;
+        }
+
+        while (true) {
+            try {
+                selector.select();
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+
+            Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+            while (iterator.hasNext()) {
+                SelectionKey key = iterator.next();
+                iterator.remove();
+                try {
+                    if (key.isAcceptable()) {
+                        ServerSocketChannel server = (ServerSocketChannel)key.channel();
+                        SocketChannel client = server.accept();
+                        client.configureBlocking(false);
+                        SelectionKey clientKey = client.register(selector, SelectionKey.OP_WRITE);
+                        ByteBuffer buffer = ByteBuffer.allocate(128);
+                        String s = "poi\r\n";
+                        for (int i = 0; i < s.length(); i++) {
+                            buffer.put((byte)s.charAt(i));
+                        }
+                        buffer.flip();
+                        clientKey.attach(buffer);
+                    }
+                    else if (key.isWritable()) {
+                        SocketChannel client = (SocketChannel)key.channel();
+                        ByteBuffer buffer = (ByteBuffer)key.attachment();
+                        client.write(buffer);
+                        key.cancel();
+                        client.close();
+                    }
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+            }
+        }
+    }
+}
+{% endhighlight %}
+
+---
+
+## UDP
+
+The UDP is an alternative transport layer protocol for sending data over IP that is very quick, but not reliable.
+
+### UDP client
+
+Client requests data from server and gets response from server.
+
+{% highlight java %}
+import java.net.DatagramSocket;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+
+import java.io.IOException;
+
+public class Poi {
+    public static void main(String[] args) {
+        try (DatagramSocket socket = new DatagramSocket(0)) {
+            socket.setSoTimeout(100000);
+
+            byte[] data = new byte[]{'n', 'i', 'c', 'o', '\r', '\n'};
+            DatagramPacket request = new DatagramPacket(data, data.length, InetAddress.getByName("localhost"), 2333);
+            socket.send(request);
+
+            DatagramPacket response = new DatagramPacket(new byte[1024], 1024);
+            socket.receive(response);
+            String result = new String(response.getData(), 0, response.getLength());
+            System.out.println(result);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+}
+{% endhighlight %}
+
+### UDP Server
+
+Server get response from client and send back required data.
+
+{% highlight java %}
+import java.net.DatagramSocket;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+
+import java.io.IOException;
+
+public class Poi {
+    public static void main(String[] args) {
+        try (DatagramSocket socket = new DatagramSocket(2333)) {
+            while (true) {
+                DatagramPacket request = new DatagramPacket(new byte[1024], 1024);
+                socket.receive(request);
+                String result = new String(request.getData(), 0, request.getLength());
+                System.out.println(result);
+
+                byte[] data = new byte[]{'p', 'o', 'i', '\r', '\n'};
+                DatagramPacket response = new DatagramPacket(data, data.length, request.getAddress(), request.getPort());
+                socket.send(response);
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
     }
 }
 {% endhighlight %}
