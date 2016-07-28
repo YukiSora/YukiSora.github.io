@@ -344,7 +344,7 @@ typedef struct list_struct
 
 list_struct* create();
 
-list_struct* destory(list_struct* head);
+list_struct* destroy(list_struct* head);
 
 void push_back(list_struct* head, int data);
 
@@ -375,7 +375,7 @@ list_struct* create()
     return new_node_ptr;
 }
 
-list_struct* destory(list_struct* head)
+list_struct* destroy(list_struct* head)
 {
     list_struct* prev_node_ptr = head;
 
@@ -479,7 +479,7 @@ int main(void)
     remove_duplicate(head);
     display(head);
 
-    destory(head);
+    destroy(head);
 
     return 0;
 }
@@ -531,7 +531,7 @@ int main(void)
 
     printf("%d\n", backward_at(head, 1));
 
-    destory(head);
+    destroy(head);
 
     return 0;
 }
@@ -576,7 +576,7 @@ int main(void)
     remove_this(head->next->next->next);
     display(head);
 
-    destory(head);
+    destroy(head);
 
     return 0;
 }
@@ -614,7 +614,7 @@ int main(void)
     partition(head, 5);
     display(head);
 
-    destory(head);
+    destroy(head);
 
     return 0;
 }
@@ -669,14 +669,14 @@ int main(void)
 
     list_struct* result1 = backward_addition(head1, head2);
     display(result1);
-    destory(result1);
+    destroy(result1);
 
     list_struct* result2 = forward_addition(head1, head2);
     display(result2);
-    destory(result2);
+    destroy(result2);
 
-    destory(head1);
-    destory(head2);
+    destroy(head1);
+    destroy(head2);
 
     return 0;
 }
@@ -728,7 +728,7 @@ list_struct* forward_addition(list_struct* head1, list_struct* head2)
             temp_node_ptr = temp_node_ptr->next;
         }
         result = _addition(len1 > len2 ? head1 : head2, zeroized_head, &carry);
-        destory(zeroized_head);
+        destroy(zeroized_head);
     }
     else
     {
@@ -841,7 +841,7 @@ int main(void)
 
     printf("%d\n", is_palindrome(head));
 
-    destory(head);
+    destroy(head);
 
     return 0;
 }
@@ -871,14 +871,14 @@ bool is_palindrome(list_struct* head)
     {
         if(prev_node_ptr1->next->data != prev_node_ptr2->next->data)
         {
-            destory(reverse_head);
+            destroy(reverse_head);
             return false;
         }
         prev_node_ptr1 = prev_node_ptr1->next;
         prev_node_ptr2 = prev_node_ptr2->next;
     }
 
-    destory(reverse_head);
+    destroy(reverse_head);
 
     return true;
 
