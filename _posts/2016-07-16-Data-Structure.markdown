@@ -35,7 +35,7 @@ typedef struct
 
 list_struct* list_create();
 
-list_struct* list_destory(list_struct* list);
+list_struct* list_destroy(list_struct* list);
 
 bool list_push_front(list_struct* list, void* data_ptr);
 
@@ -90,7 +90,7 @@ list_struct* list_create()
     return list;
 }
 
-list_struct* list_destory(list_struct* list)
+list_struct* list_destroy(list_struct* list)
 {
     if(list->head)
     {
