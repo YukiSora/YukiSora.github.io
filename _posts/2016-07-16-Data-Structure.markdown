@@ -57,7 +57,7 @@ data_t list_at(list_struct* list, int index);
 
 data_t list_back(list_struct* list);
 
-int list_search(list_struct* list, data_t data, int (*compare)(data_t argu1, data_t argu2));
+int list_search(list_struct* list, data_t data, int (*compare)(data_t, data_t));
 
 bool list_is_empty(list_struct* list);
 
@@ -214,7 +214,7 @@ data_t list_back(list_struct* list)
     return list->head ? list->head->prev->data : 0;
 }
 
-int list_search(list_struct* list, data_t data, int (*compare)(data_t argu1, data_t argu2))
+int list_search(list_struct* list, data_t data, int (*compare)(data_t, data_t))
 {
     list_node* cur_node_ptr = list->head;
     for(int i = 0; i < list->size; i++)
