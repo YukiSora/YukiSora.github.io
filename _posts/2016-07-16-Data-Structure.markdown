@@ -5,7 +5,7 @@ date: 2016-07-16 13:30:29 +0800
 categories: algorithm
 ---
 
-An implementation of few commonly used data structures in C programming language such as doubly circular linked list.
+An implementation of few commonly used data structures in C programming language such as doubly circular linked list, AVL tree.
 
 ---
 
@@ -20,11 +20,11 @@ An implementation of few commonly used data structures in C programming language
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef int data_t;
+typedef int T;
 
 typedef struct node
 {
-    data_t data;
+    T data;
     struct node* prev;
     struct node* next;
 }list_node;
@@ -39,11 +39,11 @@ list_struct* list_create();
 
 list_struct* list_destroy(list_struct* list);
 
-bool list_push_front(list_struct* list, data_t data);
+bool list_push_front(list_struct* list, T data);
 
-bool list_insert(list_struct* list, data_t data, int index);
+bool list_insert(list_struct* list, T data, int index);
 
-bool list_push_back(list_struct* list, data_t data);
+bool list_push_back(list_struct* list, T data);
 
 bool list_pop_front(list_struct* list);
 
@@ -51,19 +51,19 @@ bool list_remove(list_struct* list, int index);
 
 bool list_pop_back(list_struct* list);
 
-data_t list_front(list_struct* list);
+T list_front(list_struct* list);
 
-data_t list_at(list_struct* list, int index);
+T list_at(list_struct* list, int index);
 
-data_t list_back(list_struct* list);
+T list_back(list_struct* list);
 
-int list_search(list_struct* list, data_t data, int (*compare)(data_t, data_t));
+int list_search(list_struct* list, T data, int (*compare)(T, T));
 
 bool list_is_empty(list_struct* list);
 
 int list_size(list_struct* list);
 
-static list_node* _alloc_node(data_t data);
+static list_node* _alloc_node(T data);
 
 static void _insert(list_node* cur_node_ptr, list_node* new_node_ptr);
 
@@ -98,7 +98,7 @@ list_struct* list_destroy(list_struct* list)
     return NULL;
 }
 
-bool list_push_front(list_struct* list, data_t data)
+bool list_push_front(list_struct* list, T data)
 {
     list_node* new_node_ptr = _alloc_node(data);
     if(!new_node_ptr)
@@ -111,7 +111,7 @@ bool list_push_front(list_struct* list, data_t data)
     return true;
 }
 
-bool list_insert(list_struct* list, data_t data, int index)
+bool list_insert(list_struct* list, T data, int index)
 {
     if(index < 0 || index > list->size)
         return false;
@@ -131,7 +131,7 @@ bool list_insert(list_struct* list, data_t data, int index)
     return true;
 }
 
-bool list_push_back(list_struct* list, data_t data)
+bool list_push_back(list_struct* list, T data)
 {
     list_node* new_node_ptr = _alloc_node(data);
     if(!new_node_ptr)
@@ -192,12 +192,12 @@ bool list_pop_back(list_struct* list)
     return true;
 }
 
-data_t list_front(list_struct* list)
+T list_front(list_struct* list)
 {
     return list->head ? list->head->data : 0;
 }
 
-data_t list_at(list_struct* list, int index)
+T list_at(list_struct* list, int index)
 {
     if(!list->head || index < 0 || index > list->size - 1)
         return 0;
@@ -209,12 +209,12 @@ data_t list_at(list_struct* list, int index)
     return cur_node_ptr->data;
 }
 
-data_t list_back(list_struct* list)
+T list_back(list_struct* list)
 {
     return list->head ? list->head->prev->data : 0;
 }
 
-int list_search(list_struct* list, data_t data, int (*compare)(data_t, data_t))
+int list_search(list_struct* list, T data, int (*compare)(T, T))
 {
     list_node* cur_node_ptr = list->head;
     for(int i = 0; i < list->size; i++)
@@ -237,7 +237,7 @@ int list_size(list_struct* list)
     return list->size;
 }
 
-static list_node* _alloc_node(data_t data)
+static list_node* _alloc_node(T data)
 {
     list_node* new_node_ptr = calloc(1, sizeof(list_node));
     if(!new_node_ptr)
@@ -276,6 +276,305 @@ static list_node* _remove(list_node* cur_node_ptr)
     }
 
     return del_node_ptr;
+}
+{% endhighlight %}
+
+---
+
+## AVL Tree
+
+### avl_tree.h
+
+{% highlight c %}
+#ifndef __AVL_TREE_H__
+#define __AVL_TREE_H__
+
+#include <stdbool.h>
+#include <stdlib.h>
+
+typedef int T;
+
+typedef struct node
+{
+    T data;
+    struct node* left;
+    struct node* right;
+    int height;
+}avl_tree_node;
+
+typedef struct
+{
+    avl_tree_node* root;
+    int size;
+}avl_tree_struct;
+
+avl_tree_struct* avl_tree_create();
+
+avl_tree_struct* avl_tree_destroy(avl_tree_struct* tree);
+
+bool avl_tree_insert(avl_tree_struct* tree, T data, int (*compare)(T, T));
+
+bool avl_tree_remove(avl_tree_struct* tree, T data, int (*compare)(T, T));
+
+bool avl_tree_search(avl_tree_struct* tree, T data, int (*compare)(T, T));
+
+T avl_tree_minimum(avl_tree_struct* tree);
+
+T avl_tree_maximum(avl_tree_struct* tree);
+
+static void _destroy(avl_tree_node* root);
+
+static avl_tree_node* _insert(avl_tree_node* root, avl_tree_node* new_node_ptr, int (*compare)(T, T), bool* success);
+
+static avl_tree_node* _remove(avl_tree_node* root, T data, int (*compare)(T, T), bool* success);
+
+static avl_tree_node* _alloc_node(T data);
+
+static int _height(avl_tree_node* root);
+
+static void _update_height(avl_tree_node* root);
+
+static int _balance(avl_tree_node* root);
+
+static avl_tree_node* _rotate_left(avl_tree_node* root);
+
+static avl_tree_node* _rotate_left_right(avl_tree_node* root);
+
+static avl_tree_node* _rotate_right(avl_tree_node* root);
+
+static avl_tree_node* _rotate_right_left(avl_tree_node* root);
+
+#endif
+{% endhighlight %}
+
+### avl_tree.c
+
+{% highlight c %}
+#include "avl_tree.h"
+
+avl_tree_struct* avl_tree_create()
+{
+    return calloc(1, sizeof(avl_tree_struct));
+}
+
+avl_tree_struct* avl_tree_destroy(avl_tree_struct* tree)
+{
+    _destroy(tree->root);
+    free(tree);
+
+    return NULL;
+}
+
+bool avl_tree_insert(avl_tree_struct* tree, T data, int (*compare)(T, T))
+{
+    avl_tree_node* new_node_ptr = NULL;
+    if(!(new_node_ptr = _alloc_node(data)))
+        return false;
+
+    bool success = true;
+    tree->root = _insert(tree->root, new_node_ptr, compare, &success);
+    if(!success)
+        free(new_node_ptr);
+    tree->size++;
+
+    return success;
+}
+
+bool avl_tree_remove(avl_tree_struct* tree, T data, int (*compare)(T, T))
+{
+    bool success = true;
+    tree->root = _remove(tree->root, data, compare, &success);
+    tree->size--;
+
+    return success;
+}
+
+bool avl_tree_search(avl_tree_struct* tree, T data, int (*compare)(T, T))
+{
+    avl_tree_node* root = tree->root;
+    while(root)
+        if(compare(root->data, data) > 0)
+            root = root->left;
+        else if(compare(root->data, data) < 0)
+            root = root->right;
+        else
+            return true;
+
+    return false;
+}
+
+T avl_tree_minimum(avl_tree_struct* tree)
+{
+    avl_tree_node* root = tree->root;
+    while(root->left)
+            root = root->left;
+
+    return root->data;
+}
+
+T avl_tree_maximum(avl_tree_struct* tree)
+{
+    avl_tree_node* root = tree->root;
+    while(root->right)
+            root = root->right;
+
+    return root->data;
+}
+
+static void _destroy(avl_tree_node* root)
+{
+    if(root)
+    {
+        _destroy(root->left);
+        _destroy(root->right);
+        free(root);
+    }
+}
+
+static avl_tree_node* _insert(avl_tree_node* root, avl_tree_node* new_node_ptr, int (*compare)(T, T), bool* success)
+{
+    if(!root)
+        return new_node_ptr;
+
+    if(compare(root->data, new_node_ptr->data) > 0)
+        root->left = _insert(root->left, new_node_ptr, compare, success);
+    else if(compare(root->data, new_node_ptr->data) < 0)
+        root->right = _insert(root->right, new_node_ptr, compare, success);
+    else
+        *success = false;
+    if(!*success)
+        return root;
+    _update_height(root);
+
+    if(_balance(root) == 2)
+        if(compare(root->left->data, new_node_ptr->data) > 0)
+            return _rotate_right(root);
+        else
+            return _rotate_left_right(root);
+    else if(_balance(root) == -2)
+        if(compare(root->right->data, new_node_ptr->data) < 0)
+            return _rotate_left(root);
+        else
+            return _rotate_right_left(root);
+
+    return root;
+}
+
+static avl_tree_node* _remove(avl_tree_node* root, T data, int (*compare)(T, T), bool* success)
+{
+    if(!root)
+        return NULL;
+
+    if(compare(root->data, data) > 0)
+        root->left = _remove(root->left, data, compare, success);
+    else if(compare(root->data, data) < 0)
+        root->right = _remove(root->right, data, compare, success);
+    else
+    {
+        if(!root->left && !root->right)
+        {
+            avl_tree_node* del_node_ptr = root;
+            root = NULL;
+            free(del_node_ptr);
+        }
+        else if(!root->left || !root->right)
+        {
+            avl_tree_node* del_node_ptr = root;
+            *root = *(root->left ? root->left : root->right);
+            free(del_node_ptr);
+        }
+        else
+        {
+            avl_tree_node* max_node_ptr = root->right;
+            while(max_node_ptr->left)
+                max_node_ptr = max_node_ptr->left;
+            root->data = max_node_ptr->data;
+            bool internal_success = true;
+            root->right = _remove(root->right, max_node_ptr->data, compare, &internal_success);
+        }
+    }
+    if(!root)
+        return NULL;
+    _update_height(root);
+
+    if(_balance(root) > 1)
+        if(_balance(root->left) >= 0)
+            return _rotate_right(root);
+        else
+            return _rotate_left_right(root);
+    else if(_balance(root) < -1)
+        if(_balance(root->right) <= 0)
+            return _rotate_left(root);
+        else
+            return _rotate_right_left(root);
+
+    return root;
+}
+
+static avl_tree_node* _alloc_node(T data)
+{
+    avl_tree_node* new_node_ptr = calloc(1, sizeof(avl_tree_node));
+    if(!new_node_ptr)
+        return NULL;
+    new_node_ptr->data = data;
+    new_node_ptr->height = 1;
+
+    return new_node_ptr;
+}
+
+static int _height(avl_tree_node* root)
+{
+    return root ? root->height : 0;
+}
+
+static void _update_height(avl_tree_node* root)
+{
+    root->height = (_height(root->left) > _height(root->right) ? _height(root->left) : _height(root->right)) + 1;
+}
+
+static int _balance(avl_tree_node* root)
+{
+    return _height(root->left) - _height(root->right);
+}
+
+static avl_tree_node* _rotate_left(avl_tree_node* root)
+{
+    avl_tree_node* new_root = root->right;
+    avl_tree_node* new_root_child = root->right->left;
+
+    new_root->left = root;
+    root->right = new_root_child;
+
+    _update_height(root);
+    _update_height(new_root);
+
+    return new_root;
+}
+
+static avl_tree_node* _rotate_left_right(avl_tree_node* root)
+{
+    root->left = _rotate_left(root->left);
+    return _rotate_right(root);
+}
+
+static avl_tree_node* _rotate_right(avl_tree_node* root)
+{
+    avl_tree_node* new_root = root->left;
+    avl_tree_node* new_root_child = root->left->right;
+
+    new_root->right = root;
+    root->left = new_root_child;
+
+    _update_height(root);
+    _update_height(new_root);
+
+    return new_root;
+}
+
+static avl_tree_node* _rotate_right_left(avl_tree_node* root)
+{
+    root->right = _rotate_right(root->right);
+    return _rotate_left(root);
 }
 {% endhighlight %}
 
