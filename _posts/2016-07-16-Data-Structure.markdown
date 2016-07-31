@@ -5,7 +5,7 @@ date: 2016-07-16 13:30:29 +0800
 categories: algorithm
 ---
 
-An implementation of few commonly used data structures in C programming language such as doubly circular linked list, AVL tree.
+An implementation of few commonly used data structures in C programming language such as doubly circular linked list, AVL tree, heap.
 
 ---
 
@@ -575,6 +575,146 @@ static avl_tree_node* _rotate_right_left(avl_tree_node* root)
 {
     root->right = _rotate_right(root->right);
     return _rotate_left(root);
+}
+{% endhighlight %}
+
+---
+
+## Heap
+
+### heap.h
+
+{% highlight c %}
+#ifndef __HEAP_H__
+#define __HEAP_H__
+
+#include <stdbool.h>
+#include <stdlib.h>
+
+typedef int T;
+
+typedef struct
+{
+    T* heap;
+    int size;
+    int max_size;
+}heap_struct;
+
+heap_struct* heap_create();
+
+heap_struct* heap_destroy(heap_struct* heap);
+
+bool heap_insert(heap_struct* heap, T data, int (*compare)(T, T));
+
+bool heap_remove(heap_struct* heap, int (*compare)(T, T));
+
+T heap_top(heap_struct* heap);
+
+static void _extend_heap(heap_struct* heap);
+
+static void _heap_up(heap_struct* heap, int child, int (*compare)(T, T));
+
+static void _heap_down(heap_struct* heap, int parent, int (*compare)(T, T));
+
+static void _swap(T* a, T* b);
+
+#endif
+{% endhighlight %}
+
+### heap.c
+
+{% highlight c %}
+#include "heap.h"
+
+heap_struct* heap_create()
+{
+    heap_struct* heap =  calloc(1, sizeof(heap_struct));
+    if(heap)
+    {
+        heap->max_size = 128;
+        heap->heap = realloc(NULL, heap->max_size * sizeof(T));
+    }
+
+    return heap;
+}
+
+heap_struct* heap_destroy(heap_struct* heap)
+{
+    if(heap->heap)
+        free(heap->heap);
+    free(heap);
+
+    return heap;
+}
+
+bool heap_insert(heap_struct* heap, T data, int (*compare)(T, T))
+{
+    if(heap->size == heap->max_size)
+        return false;
+
+    heap->heap[heap->size++] = data;
+    _heap_up(heap, heap->size - 1, compare);
+    if(heap->size == heap->max_size)
+        _extend_heap(heap);
+
+    return true;
+}
+
+bool heap_remove(heap_struct* heap, int (*compare)(T, T))
+{
+    if(heap->size == 0)
+        return false;
+
+    heap->heap[0] = heap->heap[--heap->size];
+    _heap_down(heap, 0, compare);
+
+    return true;
+}
+
+T heap_top(heap_struct* heap)
+{
+    return heap->size > 0 ? heap->heap[0] : 0;
+}
+
+static void _extend_heap(heap_struct* heap)
+{
+    heap->max_size *= 2;
+    heap->heap = realloc(heap->heap, heap->max_size * sizeof(T));
+}
+
+static void _heap_up(heap_struct* heap, int child, int (*compare)(T, T))
+{
+    if(child != 0)
+    {
+        int parent = (child - 1) / 2;
+        if(compare(heap->heap[parent], heap->heap[child]) < 0)
+        {
+            _swap(heap->heap + parent, heap->heap + child);
+            _heap_up(heap, parent, compare);
+        }
+    }
+}
+
+static void _heap_down(heap_struct* heap, int parent, int (*compare)(T, T))
+{
+    int right = parent * 2 + 2;
+    int left = parent * 2 + 1;
+    if(right < heap->size)
+    {
+        int child = (right >= heap->size) || compare(heap->heap[left], heap->heap[right]) < 0 ? right : left;
+        if(compare(heap->heap[parent], heap->heap[child]) < 0)
+        {
+            _swap(heap->heap + parent, heap->heap + child);
+            _heap_down(heap, child, compare);
+        }
+    }
+}
+
+static void _swap(T* a, T* b)
+{
+    T temp = *a;
+    *a = *b;
+    *b = temp;
 }
 {% endhighlight %}
 
