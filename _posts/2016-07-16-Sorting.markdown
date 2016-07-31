@@ -17,6 +17,13 @@ int compare(T a, T b)
 {
     return a - b;
 }
+
+void swap(T* a, T* b)
+{
+    T temp = *a;
+    *a = *b;
+    *b = temp;
+}
 {% endhighlight %}
 
 ---
@@ -57,6 +64,76 @@ void shell_sort(T* arr, int len)
             arr[j + d] = temp;
         }
     }
+}
+{% endhighlight %}
+
+---
+
+## Quick Sort
+
+Time complexity: O(n log n)
+
+{% highlight c %}
+static void _insertion_sort(T* arr, int left, int right)
+{
+    for(int i = left + 1; i <= right; i++)
+    {
+        int j;
+        T temp = arr[i];
+        for(j = i - 1; j >= 0 && compare(temp, arr[j]) < 0; j--)
+            arr[j + 1] = arr[j];
+        arr[j + 1] = temp;
+    }
+}
+
+static void _select_median(T* arr, int left, int right)
+{
+    int mid = (left + right) / 2;
+    if(compare(arr[mid], arr[left]) < 0)
+        swap(arr + left, arr + mid);
+    if(compare(arr[right], arr[left]) < 0)
+        swap(arr + left, arr + right);
+    if(compare(arr[right], arr[mid]) < 0)
+        swap(arr + mid, arr + right);
+    swap(arr + mid, arr + right - 1);
+}
+
+static int _partition(T* arr, int left, int right)
+{
+    T pivot = arr[right];
+    int i = left, j = right;
+    while (true) {
+        while (compare(arr[i], pivot) < 0)
+            i++;
+        while (compare(arr[j], pivot) >= 0)
+            j--;
+        if(i > j)
+            break;
+        swap(arr + i, arr + j);
+    }
+    swap(arr + i, arr + right);
+
+    return i;
+}
+
+static void _quick_sort(T* arr, int left, int right)
+{
+    if(left + 8 > right)
+    {
+        _insertion_sort(arr, left, right);
+    }
+    else
+    {
+        _select_median(arr, left, right);
+        int mid = _partition(arr, left, right - 1);
+        _quick_sort(arr, left, mid - 1);
+        _quick_sort(arr, mid + 1, right);
+    }
+}
+
+void quick_sort(T* arr, int len)
+{
+    _quick_sort(arr, 0, len - 1);
 }
 {% endhighlight %}
 
