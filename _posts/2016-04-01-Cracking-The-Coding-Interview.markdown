@@ -886,3 +886,86 @@ bool is_palindrome(list_struct* head)
 {% endhighlight %}
 
 ---
+
+## Stacks and Queues
+
+### Question 1
+
+Describe how you could use a single array to implement three stacks.
+
+{% highlight c %}
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 20
+
+typedef struct
+{
+    int stack[MAX * 3];
+    int top[3];
+}stack;
+
+bool push(stack* stack, int n, int data);
+bool pop(stack* stack, int n);
+int top(stack* stack, int n);
+
+int main(void)
+{
+    stack stack;
+    stack.top[0] = stack.top[1] = stack.top[2] = -1;
+
+    push(&stack, 0, 3);
+    push(&stack, 0, 2);
+    push(&stack, 0, 1);
+
+    push(&stack, 1, 6);
+    push(&stack, 1, 5);
+    push(&stack, 1, 4);
+
+    push(&stack, 2, 9);
+    push(&stack, 2, 8);
+    push(&stack, 2, 7);
+
+    for(int i = 0; i < 3; i++)
+    {
+        while(top(&stack, i) != 0)
+        {
+            printf("%d\n", top(&stack, i));
+            pop(&stack, i);
+        }
+    }
+
+    return 0;
+}
+
+bool push(stack* stack, int n, int data)
+{
+    if(stack->top[n] == MAX)
+        return false;
+
+    stack->stack[MAX * n + ++stack->top[n]] = data;
+
+    return true;
+}
+
+bool pop(stack* stack, int n)
+{
+    if(stack->top[n] == -1)
+        return false;
+
+    stack->top[n]--;
+
+    return true;
+}
+
+int top(stack* stack, int n)
+{
+    if(stack->top[n] == -1)
+        return 0;
+
+    return stack->stack[MAX * n + stack->top[n]];
+}
+{% endhighlight %}
+
+---
