@@ -969,3 +969,89 @@ int top(stack* stack, int n)
 {% endhighlight %}
 
 ---
+### Question 2
+
+How could you design a stack which, in addition to push and pop, also has a function min which returns the minimum element? Push, pop and min should all operate in O(1) times.
+
+{% highlight c %}
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 20
+
+typedef struct
+{
+    int stack[MAX];
+    int top;
+    int min_stack[MAX];
+    int min_top;
+}stack;
+
+bool push(stack* stack, int data);
+bool pop(stack* stack);
+int top(stack* stack);
+int min(stack* stack);
+
+int main(void)
+{
+    stack stack;
+    stack.top = -1;
+    stack.min_top = -1;
+
+    push(&stack, 2);
+    push(&stack, 3);
+    push(&stack, 1);
+    push(&stack, 4);
+
+    while(top(&stack) != 0)
+    {
+        printf("top: %d, min: %d\n", top(&stack), min(&stack));
+        pop(&stack);
+    }
+
+    return 0;
+}
+
+bool push(stack* stack, int data)
+{
+    if(stack->top == MAX)
+        return false;
+
+    stack->stack[++stack->top] = data;
+    if(stack->min_top == -1 || data < stack->min_stack[stack->min_top])
+        stack->min_stack[++stack->min_top] = data;
+
+    return true;
+}
+
+bool pop(stack* stack)
+{
+    if(stack->top == -1)
+        return false;
+
+    if(stack->stack[stack->top] == stack->min_stack[stack->min_top])
+        stack->min_top--;
+    stack->top--;
+
+    return true;
+}
+
+int top(stack* stack)
+{
+    if(stack->top == -1)
+        return 0;
+
+    return stack->stack[stack->top];
+}
+
+int min(stack* stack)
+{
+    if(stack->top == -1)
+        return 0;
+
+    return stack->min_stack[stack->min_top];
+}
+{% endhighlight %}
+
+---
