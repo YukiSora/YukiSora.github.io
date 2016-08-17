@@ -7,7 +7,6 @@ categories: algorithm
 
 An implementation of few commonly used sorting method in C programming language such as insertion sort, shell sort.
 
-
 ## Public Definition
 
 {% highlight c %}
