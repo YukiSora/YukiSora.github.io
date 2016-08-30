@@ -941,7 +941,7 @@ int main(void)
 
 bool push(stack* stack, int n, int data)
 {
-    if(stack->top[n] == MAX)
+    if(stack->top[n] == MAX - 1)
         return false;
 
     stack->stack[MAX * n + ++stack->top[n]] = data;
@@ -969,6 +969,7 @@ int top(stack* stack, int n)
 {% endhighlight %}
 
 ---
+
 ### Question 2
 
 How could you design a stack which, in addition to push and pop, also has a function min which returns the minimum element? Push, pop and min should all operate in O(1) times.
@@ -1015,7 +1016,7 @@ int main(void)
 
 bool push(stack* stack, int data)
 {
-    if(stack->top == MAX)
+    if(stack->top == MAX - 1)
         return false;
 
     stack->stack[++stack->top] = data;
@@ -1051,6 +1052,334 @@ int min(stack* stack)
         return 0;
 
     return stack->min_stack[stack->min_top];
+}
+{% endhighlight %}
+
+---
+
+### Question 3
+
+Image a (literal) stack of plate. If the stack gets too high, it might topple. Therefore, in real life, we would likely start a new stack when the previous stack exceeds some threshold. Implement a data structure SetOfStacks that mimics this. SetOfStacks should be composed of serval stacks and should create a new stack once the previous one exceeds capacity. SetOfStacks.push() and SetOfStacks.pop() should behave identically to a single stack. Implement a function popAt(int index) which performs a pop operation on a specific sub-stack.
+
+{% highlight c %}
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SET 10
+#define MAX_SIZE 2
+
+typedef struct
+{
+    int stack[MAX_SET][MAX_SIZE];
+    int set;
+    int top;
+}stack;
+
+bool push(stack* stack, int data);
+bool pop(stack* stack);
+bool pop_at(stack* stack, int set);
+int top(stack* stack);
+
+int main(void)
+{
+    stack stack;
+    stack.set = 0;
+    stack.top = -1;
+
+    push(&stack, 1);
+    push(&stack, 2);
+    push(&stack, 3);
+    push(&stack, 4);
+    push(&stack, 5);
+
+    pop_at(&stack, 0);
+
+    while(top(&stack) != 0)
+    {
+        printf("%d\n", top(&stack));
+        pop(&stack);
+    }
+
+    return 0;
+}
+
+bool push(stack* stack, int data)
+{
+    if(stack->set == MAX_SET - 1 && stack->top == MAX_SIZE - 1)
+        return false;
+
+    if(stack->top == MAX_SIZE - 1)
+    {
+        stack->set++;
+        stack->top = -1;
+    }
+    stack->stack[stack->set][++stack->top] = data;
+
+    return true;
+}
+
+bool pop(stack* stack)
+{
+    if(stack->set == 0 && stack->top == -1)
+        return false;
+
+    stack->top--;
+    if(stack->top == -1)
+    {
+        stack->set--;
+        stack->top = MAX_SIZE - 1;
+    }
+
+    return true;
+}
+
+bool pop_at(stack* stack, int set)
+{
+    if((stack->set == 0 && stack->top == -1) || set > stack->set)
+        return false;
+
+    for(int i = set; i + 1 <= stack->set; i++)
+    {
+        stack->stack[i][MAX_SIZE - 1] = stack->stack[i + 1][0];
+        for(int j = 0; j < MAX_SIZE - 1; j++)
+            stack->stack[i + 1][j] = stack->stack[i + 1][j + 1];
+    }
+    stack->top--;
+    if(stack->top == -1)
+    {
+        stack->set--;
+        stack->top = MAX_SIZE - 1;
+    }
+
+    return true;
+}
+
+int top(stack* stack)
+{
+    if(stack->set == 0 && stack->top == -1)
+        return 0;
+
+    return stack->stack[stack->set][stack->top];
+}
+{% endhighlight %}
+
+---
+
+### Question 4
+
+In the classic problem of the Towers of Hanoi, you have 3 towers and N disks of different sizes which can slide onto any tower, The puzzle starts with disks sorted in ascending order of size from top to bottom. Write a problem to move the disks from the first tower to the last using stacks.
+
+{% highlight c %}
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 20
+
+typedef struct
+{
+    int stack[MAX];
+    int top;
+}stack;
+
+void move(int n, stack* origin, stack* buffer, stack* destination);
+bool push(stack* stack, int data);
+bool pop(stack* stack);
+int top(stack* stack);
+
+int main(void)
+{
+    stack origin;
+    origin.top = -1;
+    stack buffer;
+    buffer.top = -1;
+    stack destination;
+    destination.top = -1;
+    for(int i = 10; i >= 1; i--)
+        push(&origin, i);
+
+    move(10, &origin, &buffer, &destination);
+
+    while(top(&destination) != 0)
+    {
+        printf("%d\n", top(&destination));
+        pop(&destination);
+    }
+
+    return 0;
+}
+
+void move(int n, stack* origin, stack* buffer, stack* destination)
+{
+    if(n == 0)
+        return;
+
+    move(n - 1, origin, destination, buffer);
+
+    push(destination, top(origin));
+    pop(origin);
+
+    move(n - 1, buffer, origin, destination);
+}
+
+bool push(stack* stack, int data)
+{
+    if(stack->top == MAX - 1)
+        return false;
+
+    stack->stack[++stack->top] = data;
+
+    return true;
+}
+
+bool pop(stack* stack)
+{
+    if(stack->top == -1)
+        return false;
+
+    stack->top--;
+
+    return true;
+}
+
+int top(stack* stack)
+{
+    if(stack->top == -1)
+        return 0;
+
+    return stack->stack[stack->top];
+}
+{% endhighlight %}
+
+---
+
+### Question 5
+
+Implement a MyQueue class which implements a queue using two stack.
+
+{% highlight c %}
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 20
+
+typedef struct
+{
+    int stack[MAX];
+    int top;
+}stack;
+
+typedef struct
+{
+    stack unshift;
+    stack shift;
+    int size;
+}queue;
+
+bool shift(queue* queue, int data);
+bool unshift(queue* queue);
+int head(queue* queue);
+bool push(stack* stack, int data);
+bool pop(stack* stack);
+int top(stack* stack);
+
+int main(void)
+{
+    queue queue;
+    queue.size = 0;
+    queue.shift.top = -1;
+    queue.unshift.top = -1;
+
+    shift(&queue, 1);
+    shift(&queue, 2);
+    shift(&queue, 3);
+
+    while(head(&queue) != 0)
+    {
+        printf("%d\n", head(&queue));
+        unshift(&queue);
+    }
+
+    return 0;
+}
+
+bool shift(queue* queue, int data)
+{
+    if(queue->size == MAX)
+        return false;
+
+    push(&queue->shift, data);
+    queue->size++;
+
+    return true;
+}
+
+bool unshift(queue* queue)
+{
+    if(queue->size == 0)
+        return false;
+
+    if(!pop(&queue->unshift))
+    {
+        while(top(&queue->shift) != 0)
+        {
+            push(&queue->unshift, top(&queue->shift));
+            pop(&queue->shift);
+        }
+        pop(&queue->unshift);
+    }
+    queue->size--;
+
+    return true;
+}
+
+int head(queue* queue)
+{
+    if(queue->size == 0)
+        return 0;
+
+    int data;
+    if((data = top(&queue->unshift)) == 0)
+    {
+        while(top(&queue->shift) != 0)
+        {
+            push(&queue->unshift, top(&queue->shift));
+            pop(&queue->shift);
+        }
+        data = top(&queue->unshift);
+    }
+
+    return data;
+}
+
+bool push(stack* stack, int data)
+{
+    if(stack->top == MAX - 1)
+        return false;
+
+    stack->stack[++stack->top] = data;
+
+    return true;
+}
+
+bool pop(stack* stack)
+{
+    if(stack->top == -1)
+        return false;
+
+    stack->top--;
+
+    return true;
+}
+
+int top(stack* stack)
+{
+    if(stack->top == -1)
+        return 0;
+
+    return stack->stack[stack->top];
 }
 {% endhighlight %}
 
