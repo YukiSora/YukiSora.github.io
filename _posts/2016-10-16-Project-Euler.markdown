@@ -7,9 +7,7 @@ categories: development
 
 Project Euler.
 
----
-
-### Problem 1: Multiples of 3 and 5
+## Problem 1: Multiples of 3 and 5
 
 {% highlight python %}
 three = (3 + 999) * 999 // 3 // 2
@@ -25,7 +23,7 @@ print(sum)
 ### Problem 2: Even Fibonacci numbers
 
 {% highlight python %}
-sum, a, b = 0, 1, 2
+sum, a, b = 0, 1s, 2
 while a < 4000000:
     if a % 2 == 0:
         sum += a
