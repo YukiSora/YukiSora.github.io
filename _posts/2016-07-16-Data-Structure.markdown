@@ -7,8 +7,6 @@ categories: algorithm
 
 An implementation of few commonly used data structures in C programming language such as doubly circular linked list, AVL tree, heap.
 
----
-
 ## Doubly Circular Linked List
 
 ### list.h
