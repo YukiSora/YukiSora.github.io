@@ -5,7 +5,7 @@ date: 2016-10-16 23:27:09 +0800
 categories: development
 ---
 
-Project Euler.
+Yvonne 加油poi ๑乛◡乛๑
 
 ### Problem 1: Multiples of 3 and 5
 
@@ -30,6 +30,31 @@ while a < 4000000:
     a, b = b, a + b
 
 print(sum)
+{% endhighlight %}
+
+---
+
+### Problem 3: Largest prime factor
+
+{% highlight python %}
+import math
+
+n = prime = 600851475143
+
+i = 2
+if n % i == 0:
+    prime = i
+    while n % i == 0:
+        n //= i
+i = 3
+while n > 1 and i < math.ceil(math.sqrt(n)):
+    if n % i == 0:
+        prime = i
+        while n % i == 0:
+            n //= i
+    i += 2
+
+print(max(n, prime))
 {% endhighlight %}
 
 ---
