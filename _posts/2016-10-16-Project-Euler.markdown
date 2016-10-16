@@ -19,3 +19,19 @@ sum = three + five - fifteen
 
 print(sum)
 {% endhighlight %}
+
+---
+
+### Problem 2: Even Fibonacci numbers
+
+{% highlight python %}
+sum, a, b = 0, 1, 2
+while a < 4000000:
+    if a % 2 == 0:
+        sum += a
+    a, b = b, a + b
+
+print(sum)
+{% endhighlight %}
+
+---
