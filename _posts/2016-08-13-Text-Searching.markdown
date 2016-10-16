@@ -7,8 +7,6 @@ categories: algorithm
 
 An implementation of few commonly used text searching method in C programming language such as KMP.
 
----
-
 ## KMP
 
 {% highlight c %}
