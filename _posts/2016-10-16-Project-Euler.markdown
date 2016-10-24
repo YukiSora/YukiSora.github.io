@@ -58,3 +58,23 @@ print(max(n, prime))
 {% endhighlight %}
 
 ---
+
+### Program 4: Largest palindrome product
+
+{% highlight python %}
+def isPalindrome(n):
+    return str(n)[::-1] == str(n)
+
+max = 0
+for i in range(999, 99, -1):
+    for j in range(999, 99, -1):
+        n = i * j
+        if n < max:
+            break
+        if isPalindrome(n) and n > max:
+            max = n
+
+print(max)
+{% endhighlight %}
+
+---
