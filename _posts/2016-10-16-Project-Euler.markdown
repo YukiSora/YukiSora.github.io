@@ -78,3 +78,19 @@ print(max)
 {% endhighlight %}
 
 ---
+
+### Problem 5: Smallest multiple
+
+{% highlight python %}
+import math
+
+primes = [2, 3, 5, 7, 11, 13, 17, 19]
+
+max = 1
+for prime in primes:
+    max *= prime ** math.floor(math.log(20) / math.log(prime))
+
+print(max)
+{% endhighlight %}
+
+---
