@@ -94,3 +94,14 @@ print(max)
 {% endhighlight %}
 
 ---
+
+### Problem 6: Sum square difference
+
+{% highlight python %}
+squareOfSum = ((1 + 100) * 100 // 2) ** 2
+sumOfSquare = 100 * (100 + 1) * (2 * 100 + 1) // 6
+
+print(squareOfSum - sumOfSquare)
+{% endhighlight %}
+
+---
