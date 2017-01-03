@@ -105,3 +105,24 @@ print(squareOfSum - sumOfSquare)
 {% endhighlight %}
 
 ---
+
+### Problem 7: 10001st prime
+
+{% highlight python %}
+primes = [2, 3, 5, 7, 11, 13]
+
+n = primes[-1] + 2
+while len(primes) < 10001:
+    while True:
+        for prime in primes:
+            if n % prime == 0:
+                break
+        else:
+            break
+        n += 2
+    primes.append(n)
+
+print(primes[-1])
+{% endhighlight %}
+
+---
