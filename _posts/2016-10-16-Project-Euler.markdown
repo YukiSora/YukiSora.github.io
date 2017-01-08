@@ -171,3 +171,27 @@ for m in range(2, 21):
 {% endhighlight %}
 
 ---
+
+### Problem 10: Summation of primes
+
+{% highlight python %}
+import math
+
+sieve = [False, True] * 1000001
+sieve[1] = False
+sieve[2] = True
+
+for i in range(3, math.floor(math.sqrt(2000001))):
+    if sieve[i]:
+        for j in range(i * i, 2000001, 2 * i):
+            sieve[j] = False
+
+sum = 2
+for i in range(3, 2000001, 2):
+    if sieve[i]:
+        sum = sum + i
+
+print(sum)
+{% endhighlight %}
+
+---
