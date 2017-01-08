@@ -159,3 +159,15 @@ print(greatest)
 {% endhighlight %}
 
 ---
+
+### Problem 9: Special Pythagorean triplet
+
+{% highlight python %}
+for m in range(2, 21):
+    for n in range(1, m):
+        if 2 * m ** 2 + 2 * m * n == 1000:
+            a, b, c = m ** 2 - n ** 2, 2 * m * n, m ** 2 + n ** 2
+            print(a * b * c)
+{% endhighlight %}
+
+---
