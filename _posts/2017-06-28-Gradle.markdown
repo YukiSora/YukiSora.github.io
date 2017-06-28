@@ -1,0 +1,116 @@
+---
+layout: article
+title: "Gradle"
+date: 2017-06-28 21:54:45 +0800
+categories: development
+---
+
+Gradle is a build tool written in Groovy. It mainly support Java and other JVM language. Therefore, it's also Android's default build tool. Here is a simple guide to setup a Java project.
+
+---
+
+## Initialization
+
+There are a few types to choose to initialization.
+
+* java-application
+* java-library
+* scala-library
+* groovy-library
+* groovy-application
+* basic
+
+{% highlight bash %}
+gradle init --type java-application
+{% endhighlight %}
+
+---
+
+## Repository
+
+There are a few public repositories services to choose. In addition, it's also able to add custom repository.
+
+{% highlight groovy %}
+repositories {
+    jcenter()
+}
+
+repositories {
+    mavenCentral()
+}
+
+repositories {
+    maven {
+      url "http://maven.yukisora.moe/"
+    }
+}
+{% endhighlight %}
+
+---
+
+## Dependencie
+
+### External dependency
+
+There are two ways to represent external dependency.
+
+{% highlight groovy %}
+dependencies {
+    compile group: 'moe.yukisora', name: 'megumin', version: '1.0.0'
+}
+
+dependencies {
+    compile 'moe.yukisora:megumin:1.0.0'
+}
+{% endhighlight %}
+
+### Project dependency
+
+Project dependency path is needed to include in settings.gradle.
+
+{% highlight groovy %}
+dependencies {
+    compile project(':megumin')
+}
+{% endhighlight %}
+
+### File dependency
+
+To include dependency out of repository.
+
+{% highlight groovy %}
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+    compile file('libs/poi.jar')
+}
+{% endhighlight %}
+
+---
+
+## Run
+
+Add main class for jar output jar, if want to run from jar.
+
+{% highlight groovy %}
+jar {
+    manifest {
+      attributes 'Main-Class': 'App'
+    }
+}
+{% endhighlight %}
+
+Build project.
+
+{% highlight bash %}
+gradle build
+{% endhighlight %}
+
+Run project by class or jar.
+
+{% highlight bash %}
+java -cp build/classes/main/ App
+
+java -jar build/libs/poi.jar
+{% endhighlight %}
+
+---
