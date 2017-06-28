@@ -48,7 +48,7 @@ repositories {
 
 ---
 
-## Dependencie
+## Dependency
 
 ### External dependency
 
