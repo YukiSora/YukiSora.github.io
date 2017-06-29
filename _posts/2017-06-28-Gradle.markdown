@@ -89,28 +89,11 @@ dependencies {
 
 ## Run
 
-Add main class for jar output jar, if want to run from jar.
-
-{% highlight groovy %}
-jar {
-    manifest {
-      attributes 'Main-Class': 'App'
-    }
-}
-{% endhighlight %}
-
-Build project.
+Build and run project.
 
 {% highlight bash %}
 gradle build
-{% endhighlight %}
-
-Run project by class or jar.
-
-{% highlight bash %}
-java -cp build/classes/main/ App
-
-java -jar build/libs/poi.jar
+gradle run
 {% endhighlight %}
 
 ---
