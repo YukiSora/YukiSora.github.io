@@ -1,0 +1,56 @@
+@mixin a() {
+  a {
+    color: white;
+    text-decoration: none;
+
+    &:hover {
+      color: #66ccff;
+      text-decoration: underline;
+    }
+  }
+}
+
+.index {
+  min-height: 600px;
+  margin: 0px;
+  padding: 0px;
+
+  .item {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+    list-style-image: none;
+
+    li {
+      margin-bottom: 20px;
+      padding: 20px;
+      font-size: 20px;
+      border-bottom: 3px solid gray;
+
+      header {
+        margin: 20px 0px;
+
+        .title {
+          font-size: 2em;
+
+          @include a();
+        }
+
+        .date {
+          text-align: right;
+        }
+      }
+
+      .excerpt {
+        text-align: justify;
+        min-height: 50px;
+      }
+
+      .more {
+        text-align: right;
+
+        @include a();
+      }
+    }
+  }
+}
