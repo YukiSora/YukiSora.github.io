@@ -9,16 +9,10 @@
 
       {% include header.html %}
 
-      <div class="container" id="body">
-        <row>
-          <div class="col-md-1">
-          </div>
-          <div class="col-md-10 content">
-            {{ content }}
-          </div>
-          <div class="col-md-1">
-          </div>
-        </row>
+      <div id="body">
+        <div class="content">
+          {{ content }}
+        </div>
       </div>
 
       {% include footer.html %}

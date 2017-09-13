@@ -2,7 +2,7 @@
 layout: article
 title: "Toolbar"
 date: 2017-08-29 14:36:59 +0800
-categories: development
+categories: android
 ---
 
 Toolbar 在 Android 5.0 推出用来代替 ActionBar。

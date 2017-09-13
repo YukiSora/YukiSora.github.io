@@ -2,7 +2,7 @@
 layout: article
 title: "Bottom Navigation View"
 date: 2017-08-30 14:15:50 +0800
-categories: development
+categories: android
 ---
 
 BottomNavigationView 是遵循 Material Design 的底部导航栏。

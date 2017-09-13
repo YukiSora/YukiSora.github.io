@@ -1,57 +1,39 @@
-@mixin block-center() {
-  display: inline-block;
-  float: none;
-  vertical-align: top;
-}
-
 #main-nav {
-  //Navbar
-  margin: 0px;
   height: 700px;
-  border: none;
-  border-radius: 0px;
-  //yande.re 284228
+  // yande.re 284228
   background: #444 url(/image/nav-background.png) center no-repeat;
   font-size: 1.5em;
   transition: height 0.2s linear;
   box-shadow: 0px 0px 2px gray;
-  padding: 0px;
 
-  .navbar-center {
-    text-align: center;
+  // nav bar
+  .nav-item {
+    a {
+      position: relative;
+      color: white;
+      transition: color 0.3s ease;
+      text-decoration: none;
 
-    .navbar-nav {
-      @include block-center();
+      &:before {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        content: "";
+        background-color: #fff;
+        visibility: hidden;
+        transform: scaleX(0);
+        transition: all 0.3s ease-in-out 0s;
+      }
 
-      a {
-        color: white;
-        transition: color 0.3s ease;
-
-        //text
-        position: relative;
-        text-decoration: none;
+      &:hover {
+        color: #555;
 
         &:before {
-          content: "";
-          position: absolute;
-          width: 100%;
-          height: 2px;
-          bottom: 0;
-          left: 0;
-          background-color: #fff;
-          visibility: hidden;
-          transform: scaleX(0);
-          transition: all 0.3s ease-in-out 0s;
-        }
-
-        &:hover {
-          color: #555;
-
-          &:before {
-            background-color: #555;
-            visibility: visible;
-            transform: scaleX(1);
-          }
+          background-color: #555;
+          visibility: visible;
+          transform: scaleX(1);
         }
       }
     }
@@ -61,14 +43,10 @@
     height: 50px;
   }
 
-  //Profile image and text
-  .profile-center {
-    text-align: center;
+  // profile image and text
+  #profile {
     margin-top: 150px;
-
-    .profile-div {
-      @include block-center();
-    }
+    text-align: center;
 
     .profile-img {
       width: 200px;
@@ -82,6 +60,7 @@
     }
 
     .profile-text {
+      margin-top: 50px;
       color: #ccc;
       transition: color 0.5s ease;
 
@@ -99,10 +78,6 @@
 .display-block {
   animation: fade-in 0.8s;
   display: block;
-}
-
-#body.body-padding-top {
-  padding-top: 150px;
 }
 
 @keyframes shak {

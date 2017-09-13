@@ -2,7 +2,7 @@
 layout: article
 title: "Recycler View"
 date: 2017-08-31 14:13:55 +0800
-categories: development
+categories: android
 ---
 
 RecyclerView 是新的数据集显示控件，比以往都更加灵活。
