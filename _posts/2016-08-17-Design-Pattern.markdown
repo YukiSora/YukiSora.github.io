@@ -143,13 +143,94 @@ public class Invoker {
 {% highlight java %}
 public class Client {
     public static void main(String[] args) {
-       Receiver receiver = new Receiver();
-       Command command1 = new ConcreteCommand1(receiver);
-       Command command2 = new ConcreteCommand2(receiver);
-       Invoker invoker = new Invoker(command1, command2);
+        Receiver receiver = new Receiver();
+        Command command1 = new ConcreteCommand1(receiver);
+        Command command2 = new ConcreteCommand2(receiver);
+        Invoker invoker = new Invoker(command1, command2);
 
-       invoker.executeAction1();
-       invoker.executeAction2();
+        invoker.executeAction1();
+        invoker.executeAction2();
+    }
+}
+{% endhighlight %}
+
+---
+
+## Interpreter
+
+将问题归纳为公式，并构建一个解释器，给参数算结果。
+
+{% highlight java %}
+public interface AbstractExpression {
+    String interpret();
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class TerminalExpression implements AbstractExpression {
+    private String expression;
+
+    public TerminalExpression(String expression) {
+        this.expression = expression;
+    }
+
+    @Override
+    public String interpret() {
+        return expression;
+    }
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class NonterminalExpression implements AbstractExpression {
+    private AbstractExpression expression1;
+    private AbstractExpression expression2;
+
+    public NonterminalExpression(AbstractExpression expression1, AbstractExpression expression2) {
+        this.expression1 = expression1;
+        this.expression2 = expression2;
+    }
+
+    @Override
+    public String interpret() {
+        return expression1.interpret() + expression2.interpret();
+    }
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class Context {
+    private HashMap<String, String> values;
+
+    public Context() {
+        values = new HashMap<>();
+    }
+
+    public void setValue(String key, String value) {
+        values.put(key, value);
+    }
+
+    public String getResult(String expression) {
+        String[] keys = expression.split("\\+");
+        String result = "";
+        for (String key : keys) {
+            result = new NonterminalExpression(new TerminalExpression(result), new TerminalExpression(values.get(key))).interpret();
+        }
+
+        return result;
+    }
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class Client {
+    public static void main(String[] args) {
+        Context context = new Context();
+        context.setValue("s1", "Nico");
+        context.setValue("s2", "Nico");
+        context.setValue("s3", "Ni");
+
+        System.out.println(context.getResult("s1+s2+s3"));
     }
 }
 {% endhighlight %}
