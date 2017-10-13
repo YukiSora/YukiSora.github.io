@@ -162,21 +162,21 @@ public class Client {
 
 {% highlight java %}
 public interface AbstractExpression {
-    String interpret();
+    String interpret(Context context);
 }
 {% endhighlight %}
 
 {% highlight java %}
 public class TerminalExpression implements AbstractExpression {
-    private String expression;
+    private String key;
 
-    public TerminalExpression(String expression) {
-        this.expression = expression;
+    public TerminalExpression(String key) {
+        this.key = key;
     }
 
     @Override
-    public String interpret() {
-        return expression;
+    public String interpret(Context context) {
+        return context.getValue(key);
     }
 }
 {% endhighlight %}
@@ -192,8 +192,8 @@ public class NonterminalExpression implements AbstractExpression {
     }
 
     @Override
-    public String interpret() {
-        return expression1.interpret() + expression2.interpret();
+    public String interpret(Context context) {
+        return expression1.interpret(context) + expression2.interpret(context);
     }
 }
 {% endhighlight %}
@@ -210,14 +210,8 @@ public class Context {
         values.put(key, value);
     }
 
-    public String getResult(String expression) {
-        String[] keys = expression.split("\\+");
-        String result = "";
-        for (String key : keys) {
-            result = new NonterminalExpression(new TerminalExpression(result), new TerminalExpression(values.get(key))).interpret();
-        }
-
-        return result;
+    public String getValue(String key) {
+        return values.get(key);
     }
 }
 {% endhighlight %}
@@ -226,11 +220,13 @@ public class Context {
 public class Client {
     public static void main(String[] args) {
         Context context = new Context();
-        context.setValue("s1", "Nico");
-        context.setValue("s2", "Nico");
-        context.setValue("s3", "Ni");
+        TerminalExpression s1 = new TerminalExpression("s1");
+        TerminalExpression s2 = new TerminalExpression("s2");
+        NonterminalExpression op = new NonterminalExpression(s1, s2);
+        context.setValue("s1", "NicoNico");
+        context.setValue("s2", "Ni");
 
-        System.out.println(context.getResult("s1+s2+s3"));
+        System.out.println(op.interpret(context));
     }
 }
 {% endhighlight %}
