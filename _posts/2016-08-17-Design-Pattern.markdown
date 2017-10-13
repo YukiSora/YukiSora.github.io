@@ -232,3 +232,107 @@ public class Client {
 {% endhighlight %}
 
 ---
+
+## Iterator
+
+迭代聚合而不暴露聚合的实现。
+
+{% highlight java %}
+public interface Iterator<T> {
+    void first();
+    void next();
+    boolean isDone();
+    T currentItem();
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class ConcreteIterator<T> implements Iterator<T> {
+    private Aggregate<T> aggregate;
+    private int index;
+
+    public ConcreteIterator(Aggregate<T> aggregate) {
+        this.aggregate = aggregate;
+    }
+
+    @Override
+    public void first() {
+        index = 0;
+    }
+
+    @Override
+    public void next() {
+        if (index < aggregate.size()) {
+            index++;
+        }
+    }
+
+    @Override
+    public boolean isDone() {
+        return index >= aggregate.size();
+    }
+
+    @Override
+    public T currentItem() throws IndexOutOfBoundsException {
+        return aggregate.get(index);
+    }
+}
+{% endhighlight %}
+
+{% highlight java %}
+public interface Aggregate<T> {
+    Iterator<T> createIterator();
+    int size();
+    void add(T value);
+    T get(int index);
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class ConreteAggregate<T> implements Aggregate<T> {
+    private ArrayList<T> list;
+
+    public ConreteAggregate() {
+        list = new ArrayList<>();
+    }
+
+    @Override
+    public Iterator<T> createIterator() {
+        return new ConcreteIterator<T>(this);
+    }
+
+    @Override
+    public int size() {
+        return list.size();
+    }
+
+    @Override
+    public void add(T value) {
+        list.add(value);
+    }
+
+    @Override
+    public T get(int index) {
+        return list.get(index);
+    }
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class Client {
+    public static void main(String[] args) {
+        ConreteAggregate<String> aggregate = new ConreteAggregate<>();
+        Iterator<String> iterator = aggregate.createIterator();
+        aggregate.add("1");
+        aggregate.add("2");
+        aggregate.add("3");
+
+        while (!iterator.isDone()) {
+            System.out.println(iterator.currentItem());
+            iterator.next();
+        }
+    }
+}
+{% endhighlight %}
+
+---
