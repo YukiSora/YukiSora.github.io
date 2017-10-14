@@ -15,7 +15,7 @@ Design Pattern.
 
 请求的分发方式可以有很多种实现，比如缺省实现自动将请求传给下一个对象或条件判断是否将请求传给下一个对象。<br>
 
-请求的处理也可以有多种实现，比如自己吞下请求，自己处理请求后仍将请求传给下一个对象，先将请求传给下一个对象后再自己处理请求。<br
+请求的处理也可以有多种实现，比如自己吞下请求，自己处理请求后仍将请求传给下一个对象，先将请求传给下一个对象后再自己处理请求。
 
 {% highlight java %}
 public abstract class Handler {
@@ -68,7 +68,7 @@ public class Client {
 
 ---
 
-## Command
+## Command 命令
 
 将请求封装起来以实现请求的复用、记录、逆调用，并且将调用者与实现者解耦。
 
@@ -156,7 +156,7 @@ public class Client {
 
 ---
 
-## Interpreter
+## Interpreter 解释器
 
 将问题归纳为公式，并构建一个解释器，给参数算结果。
 
@@ -233,7 +233,7 @@ public class Client {
 
 ---
 
-## Iterator
+## Iterator 迭代器
 
 迭代聚合而不暴露聚合的实现。
 
@@ -331,6 +331,107 @@ public class Client {
             System.out.println(iterator.currentItem());
             iterator.next();
         }
+    }
+}
+{% endhighlight %}
+
+---
+
+## Mediator 中介者
+
+接管多个对象间的复杂通信，使对象之间不需要相互引用。
+
+{% highlight java %}
+public abstract class Colleague {
+    protected Mediator mediator;
+
+    public Colleague(Mediator mediator) {
+        this.mediator = mediator;
+        mediator.addColleague(this);
+    }
+
+    public abstract void call();
+
+    public abstract void action();
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class ConcreteColleague1 extends Colleague {
+    public ConcreteColleague1(Mediator mediator) {
+        super(mediator);
+    }
+
+    @Override
+    public void call() {
+        mediator.action(this);
+    }
+
+    @Override
+    public void action() {
+        System.out.println("action1");
+    }
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class ConcreteColleague2 extends Colleague {
+    public ConcreteColleague2(Mediator mediator) {
+        super(mediator);
+    }
+
+    @Override
+    public void call() {
+        mediator.action(this);
+    }
+
+    @Override
+    public void action() {
+        System.out.println("action2");
+    }
+}
+{% endhighlight %}
+
+{% highlight java %}
+public interface Mediator {
+    void addColleague(Colleague colleague);
+    void action(Colleague colleague);
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class ConcreteMediator implements Mediator {
+    private ArrayList<Colleague> colleagues;
+
+    public ConcreteMediator() {
+        colleagues = new ArrayList<>();
+    }
+
+    @Override
+    public void addColleague(Colleague colleague) {
+        colleagues.add(colleague);
+    }
+
+    @Override
+    public void action(Colleague colleague) {
+        for (Colleague thisColleague : colleagues) {
+            if (thisColleague != colleague) {
+                thisColleague.action();
+            }
+        }
+    }
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class Client {
+    public static void main(String[] args) {
+        Mediator mediator = new ConcreteMediator();
+        Colleague colleague1 = new ConcreteColleague1(mediator);
+        Colleague colleague2 = new ConcreteColleague2(mediator);
+
+        colleague1.call();
+        colleague2.call();
     }
 }
 {% endhighlight %}
