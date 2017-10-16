@@ -516,3 +516,101 @@ public class Client {
 {% endhighlight %}
 
 ---
+
+## Observer 观察者
+
+当对象发生改变时，通知所有依赖它的对象。
+
+{% highlight java %}
+public interface Subject {
+    void attach(Observer observer);
+    void detach(Observer observer);
+    void notifyUpdate();
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class ConcreteSubject implements Subject {
+    private ArrayList<Observer> observers;
+    private String state;
+
+    public ConcreteSubject() {
+        observers = new ArrayList<>();
+    }
+
+    @Override
+    public void attach(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void detach(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyUpdate() {
+        for (Observer observer : observers) {
+            observer.update();
+        }
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+}
+{% endhighlight %}
+
+{% highlight java %}
+public interface Observer {
+    void update();
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class ConcreteObserver implements Observer {
+    private ConcreteSubject subject;
+    private String state;
+
+    public ConcreteObserver(ConcreteSubject subject) {
+        this.subject = subject;
+    }
+
+    @Override
+    public void update() {
+        state = subject.getState();
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+}
+{% endhighlight %}
+
+{% highlight java %}
+public class Client {
+    public static void main(String[] args) {
+        ConcreteSubject subject = new ConcreteSubject();
+        ConcreteObserver observer1 = new ConcreteObserver(subject);
+        ConcreteObserver observer2 = new ConcreteObserver(subject);
+        subject.attach(observer1);
+        subject.attach(observer2);
+
+        subject.setState("state");
+        subject.notifyUpdate();
+
+        System.out.println(observer1.getState());
+        System.out.println(observer2.getState());
+    }
+}
+{% endhighlight %}
+
+---
