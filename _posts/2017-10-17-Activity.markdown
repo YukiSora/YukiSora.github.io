@@ -1,0 +1,175 @@
+---
+layout: article
+title: "Activity"
+date: 2017-10-17 21:41:48 +0800
+categories: android
+---
+
+Activity 是程序的主体部分。
+
+## 基础用法
+
+继承 Activity 类，在使用 ActionBar 的时候可以选择继承 AppCompatActivity。
+
+{% highlight java %}
+public class MainActivity extends Activity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
+{% endhighlight %}
+
+在 AndroidManifest 中注册 Activity。
+
+{% highlight xml %}
+<activity android:name=".MainActivity">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+</activity>
+{% endhighlight %}
+
+---
+
+## 生命周期
+
+* onCreate 创建时
+* onStart 可见时
+* onResume 获得焦点时
+* onPause 失去焦点时
+* onStop 不可见时
+* onDestroy 销毁时
+* onRestart 重启时
+
+---
+
+## 保存数据
+
+当 activity 被重新创建时会恢复在销毁前储存的数据。<br/>
+onSaveInstanceState 在 onStop 之前调用，onRestoreInstanceState 在 onStart 之后调用。
+
+{% highlight java %}
+@Override
+protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putString("key", "value");
+}
+
+@Override
+protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    Log.i("tag", savedInstanceState.getString("key");
+}
+{% endhighlight %}
+
+---
+
+## 启动 Activity
+
+直接指定要启动的 activity 的 class。
+
+{% highlight java %}
+Intent intent = new Intent(this, SecondActivity.class);
+startActivity(intent);
+{% endhighlight %}
+
+指定要启动的 activity 的过滤条件，如果有多个 activity 满足条件会让用户选择。
+
+{% highlight xml %}
+<activity android:name=".SecondActivity">
+    <intent-filter>
+        <action android:name="moe.yukisora.app.SecondActivity" />
+    </intent-filter>
+</activity>
+{% endhighlight %}
+
+{% highlight java %}
+Intent intent = new Intent("moe.yukisora.app.SecondActivity");
+startActivity(intent);
+{% endhighlight %}
+
+### 带返回值 Activity
+
+额外指定 REQUEST_CODE。
+
+{% highlight java %}
+public static final int REQUEST_CODE = 1;
+{% endhighlight %}
+
+{% highlight java %}
+Intent intent = new Intent(this, SecondActivity.class);
+startActivityForResult(intent, REQUEST_CODE);
+{% endhighlight %}
+
+获取返回值，根据 requestCode 和 resultCode 区分请求和结果来源。
+
+{% highlight java %}
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == REQUEST_CODE) {
+        Log.i("tag", data.getStringExtra("key"));
+    }
+}
+{% endhighlight %}
+
+Activity 设定返回值。
+
+{% highlight java %}
+Intent intent = new Intent();
+intent.putExtra("key", "value");
+setResult(1, intent);
+finish();
+{% endhighlight %}
+
+---
+
+## 启动模式
+
+* standard 标准模式
+* singleTop 如果栈顶已存在此 Activity 则复用此 Activity
+* singleTask 新建一个以此 Activity 为根的栈，如果复用此 Activity 则销毁在其顶部的所有其他 Activity。只有当 taskAffinity 与默认不同时才会新建栈
+* singleInstance 新建一个以此 Activity 为根的栈，且仅能有这一个 Activity
+
+在 AndroidManifest 设置启动模式。
+
+{% highlight xml %}
+<activity
+    android:name=".SecondActivity"
+    android:launchMode="singleInstance" />
+{% endhighlight %}
+
+用代码设置启动模式优先级更到，但是无法设定 singleInstance 模式。
+
+{% highlight java %}
+Intent intent = new Intent(this, SecondActivity.class);
+intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+startActivity(intent);
+{% endhighlight %}
+
+复用发生时会调用 onNewIntent。
+
+{% highlight java %}
+@Override
+protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+}
+{% endhighlight %}
+
+---
+
+## Flag
+
+* FLAG_ACTIVITY_NEW_TASK 新建一个以此 Activity 为根的栈，只有当 taskAffinity 与默认不同时才会新建栈
+* FLAG_ACTIVITY_CLEAR_TOP 销毁此 Activity 顶部的所有其他 Activity，并重新创建此 Activity。与 FLAG_ACTIVITY_NEW_TASK 配合使用会得到 singleTask 的效果
+
+{% highlight java %}
+Intent intent = new Intent(this, SecondActivity.class);
+intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+startActivity(intent);
+{% endhighlight %}
+
+---
