@@ -1,0 +1,157 @@
+---
+layout: article
+title: "Service"
+date: 2017-10-20 12:48:51 +0800
+categories: android
+---
+
+Service 是无界面后台执行的组件。
+
+## 基础用法
+
+继承 Service 类。
+
+{% highlight java %}
+public class FirstService extends Service {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+}
+{% endhighlight %}
+
+在 AndroidManifest 中注册 Service。
+
+{% highlight xml %}
+<service android:name=".FirstService" />
+{% endhighlight %}
+
+启动 Service。
+
+{% highlight java %}
+Intent intent = new Intent(this, MainService.class);
+startService(intent);
+{% endhighlight %}
+
+停止 Service。
+
+{% highlight java %}
+Intent intent = new Intent(this, MainService.class);
+stopService(intent);
+{% endhighlight %}
+
+---
+
+## 绑定 Service
+
+Service 内部实现 Binder 类，负责绑定者与服务之间通信。
+
+{% highlight java %}
+public class FirstService extends Service {
+    private ServiceBinder binder = new ServiceBinder();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return super.onUnbind(intent);
+    }
+
+    class ServiceBinder extends Binder {
+        void action() {
+            Log.i("poi", "action");
+        }
+    }
+}
+{% endhighlight %}
+
+实现 ServiceConnection。
+
+{% highlight java %}
+private FirstService.ServiceBinder binder;
+private ServiceConnection connection = new ServiceConnection() {
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        binder = (FirstService.ServiceBinder)service;
+        binder.action();
+    }
+};
+{% endhighlight %}
+
+绑定服务。
+
+{% highlight java %}
+Intent intent = new Intent(MainActivity.this, FirstService.class);
+bindService(intent, connection, BIND_AUTO_CREATE);
+{% endhighlight %}
+
+解绑服务。只有当所有相对应的 stopService 和 unbindService 调用之后才会调用 onDestroy。
+
+{% highlight java %}
+if (binder != null) {
+    unbindService(connection);
+    binder = null;
+}
+{% endhighlight %}
+
+---
+
+## 前台服务
+
+启动前台服务。
+
+{% highlight java %}
+NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+builder.setSmallIcon(R.mipmap.ic_launcher);
+builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+builder.setContentTitle("Notification");
+Notification notification = builder.build();
+startForeground(1, notification);
+{% endhighlight %}
+
+停止前台服务。
+
+{% highlight java %}
+stopForeground(true);
+{% endhighlight %}
+
+---
