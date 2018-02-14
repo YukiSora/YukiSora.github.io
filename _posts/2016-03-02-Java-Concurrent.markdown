@@ -3,6 +3,7 @@ layout: article
 title: "Java Concurrent"
 date: 2016-03-02 02:08:11 +0800
 categories: algorithm
+node: algorithm
 ---
 
 Implementing concurrent by using Java. Here has three algorithms to solve mutual exclusion Problem. There are Dekker's algorithm, Peterson's algorithm, Lamport's bakery algorithm. In addition there are some advanced methods.

@@ -3,6 +3,7 @@ layout: article
 title: "Text Searching"
 date: 2016-08-13 14:18:27 +0800
 categories: algorithm
+node: algorithm
 ---
 
 An implementation of few commonly used text searching method in C programming language such as KMP.

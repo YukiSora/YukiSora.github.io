@@ -3,6 +3,7 @@ layout: article
 title: "Design Pattern"
 date: 2016-08-17 11:30:13 +0800
 categories: development
+node: development
 ---
 
 Design Pattern.

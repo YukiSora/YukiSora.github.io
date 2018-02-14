@@ -3,6 +3,7 @@ layout: article
 title: "Ripple"
 date: 2017-08-31 09:58:14 +0800
 categories: android
+node: android
 ---
 
 Ripple 是 Android 5.0 之后加入的点击反馈波纹效果。

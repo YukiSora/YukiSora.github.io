@@ -3,6 +3,7 @@ layout: article
 title: "AsyncTask"
 date: 2017-10-23 21:17:32 +0800
 categories: android
+node: android
 ---
 
 AsyncTask 是一个简单的异步操作封装。

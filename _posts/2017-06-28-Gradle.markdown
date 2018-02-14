@@ -3,6 +3,7 @@ layout: article
 title: "Gradle"
 date: 2017-06-28 21:54:45 +0800
 categories: development
+node: development
 ---
 
 Gradle is a build tool written in Groovy. It mainly support Java and other JVM language. Therefore, it's also Android's default build tool. Here is a simple guide to setup a Java project.

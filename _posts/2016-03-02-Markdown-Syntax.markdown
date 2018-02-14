@@ -3,6 +3,7 @@ layout: article
 title: "Markdown Syntax"
 date: 2016-03-02 16:10:43 +0800
 categories: development
+node: development
 ---
 
 In order to write blog by using static site generator, need to learn Markdown syntax. Markdown is a text-to-HTML conversion tool for web writers. Markdown allows you to write using an easy-to-read, easy-to-write plain text format, then convert it to structurally valid XHTML (or HTML).

@@ -3,6 +3,7 @@ layout: article
 title: "Activity"
 date: 2017-10-17 21:41:48 +0800
 categories: android
+node: android
 ---
 
 Activity 是程序的主体部分。

@@ -3,6 +3,7 @@ layout: article
 title: "Data Structure"
 date: 2016-07-16 13:30:29 +0800
 categories: algorithm
+node: algorithm
 ---
 
 An implementation of few commonly used data structures in C programming language such as doubly circular linked list, AVL tree, heap.

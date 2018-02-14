@@ -1,9 +1,9 @@
 .article {
-  min-height: 700px;
+  min-height: 100vh;
   text-align: justify;
 
   header {
-    margin: 48px 0px;
+    margin: 48px 0;
 
     p {
       text-align: right;
@@ -11,100 +11,141 @@
   }
 
   h1 {
-    font-size: 48px;
+    font-size: 3em;
     font-weight: bold;
     text-align: center;
+    transition: text-shadow .3s ease;
+
+    &:hover {
+      text-shadow: #969696 -1px 3px 0, #aba8a8 -4px 13px 5px;
+    }
   }
 
   h2 {
-    margin: 40px 0px;
-    padding-right: 30px;
+    margin: 40px 0;
     border-bottom: 1px solid #c69;
     color: #c69;
-    font-size: 40px;
+    font-size: 2.5em;
     font-weight: bold;
   }
 
   h3 {
-    margin: 32px 0px;
+    margin: 32px 0;
     color: #699;
-    font-size: 32px;
+    font-size: 2em;
     font-weight: bold;
   }
 
   h4 {
-    margin: 28px 0px;
+    margin: 28px 0;
     color: #669;
-    font-size: 28px;
+    font-size: 1.75em;
     font-weight: bold;
   }
 
   h5 {
-    margin: 24px 0px;
+    margin: 24px 0;
     color: #cc9;
-    font-size: 24px;
+    font-size: 1.5em;
     font-weight: bold;
   }
 
   h6 {
-    margin: 20px 0px;
+    margin: 20px 0;
     color: #9c9;
-    font-size: 20px;
+    font-size: 1.25em;
     font-weight: bold;
   }
 
   p {
     margin: 20px;
-    font-size: 20px;
+    font-size: 1.25em;
+
+    code {
+      font-size: 1em;
+    }
   }
 
   a {
-    color: #66ccff;
+    color: #66CCFF;
 
     &:hover {
-      color: #66ccff;
+      color: #66CCFF;
       text-decoration: underline;
     }
   }
 
   ul, ol {
-    font-size: 20px;
     margin: 20px;
+    font-size: 1.25em;
+
+    p {
+      margin: 20px;
+      font-size: 1em;
+    }
 
     li {
-      margin: 20px 0px;
+      margin: 20px 0;
       padding-left: 20px;
+      font-size: 1em;
 
-      ul {
-        margin: 20px 0px;
+      ul, ol {
+        margin: 20px 0;
+        font-size: 1em;
       }
 
       p {
-        margin: 20px 0px;
+        margin: 20px 0;
+        font-size: 1em;
       }
     }
   }
 
   table {
-    width: 95%;
     width: calc(100% - 40px);
     margin: 20px auto;
     border-collapse: collapse;
     table-layout: fixed;
-    background-color: #23241f;
+    font-size: 1.25em;
+
+    tr {
+      &:first-child th {
+        background: #1F2739;
+      }
+
+      &:nth-child(n) td {
+        background: #2C3446;
+      }
+
+      &:nth-child(2n) td {
+        background: #323C50
+      }
+
+      &:hover td {
+        background-color: #464A52;
+        color: #FB667A;
+      }
+    }
 
     th {
-      font-weight: bold;
-    }
-
-    th, td {
       padding: 10px;
       border: 1px solid black;
-      font-size: 20px;
+      font-weight: bold;
       text-align: center;
+      color: #185875;
     }
 
-    tr:hover {background-color: #555}
+    td {
+      padding: 10px;
+      border: 1px solid black;
+      text-align: center;
+      color: #808080;
+
+      table {
+        width: calc(100% + 20px);
+        margin: -10px;
+      }
+    }
   }
 
   img {
@@ -119,46 +160,46 @@
     }
   }
 
-  pre {
-    margin: 20px;
+  .highlight {
+    margin: 0 20px;
     padding: 10px 10px;
-    background-color: #23241f;
+    background-color: #23241F;
   }
 
   code {
-    border-radius: 0px;
-    color: white;
-    background-color: #23241f;
+    border-radius: 0;
+    color: #FFF;
+    background-color: #23241F;
     font-family: 'Droid Sans Mono', 'Courier New', 'Consolas', 'Courier';
-    font-size: 20px;
+    font-size: 1.25em;
   }
 
   hr {
-    margin: 100px 0px;
-    border: 4px double #8c8b8b;
+    margin: 100px 0;
+    border: 4px double #808080;
   	text-align: center;
 
     &:after {
     	display: inline-block;
     	position: relative;
     	top: -16px;
-      margin: 0px;
+      margin: 0;
     	padding: 0 10px;
-      color: white;
-    	background-color: #333;
-    	font-size: 20px;
+      color: #FFF;
+    	background-color: #424242;;
+    	font-size: 1.25em;
       content: 'poi';
     }
   }
 
   blockquote {
-    background: #23241f;
-    border-left: 10px solid #ccc;
+    background: #23241F;
+    border-left: 10px solid #808080;
     margin: 20px;
     padding: 10px;
 
     &:before {
-      color: #ccc;
+      color: #808080;
       content: open-quote;
       font-size: 80px;
       line-height: 1px;
@@ -167,7 +208,7 @@
     }
 
     &:after {
-      color: #ccc;
+      color: #808080;
       content: close-quote;
       font-size: 80px;
       line-height: 1px;

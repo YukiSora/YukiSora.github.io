@@ -3,6 +3,7 @@ layout: article
 title: "Sorting"
 date: 2016-07-16 22:51:48 +0800
 categories: algorithm
+node: algorithm
 ---
 
 An implementation of few commonly used sorting method in C programming language such as insertion sort, shell sort.

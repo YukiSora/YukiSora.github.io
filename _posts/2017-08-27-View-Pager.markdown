@@ -3,6 +3,7 @@ layout: article
 title: "View Pager"
 date: 2017-08-27 17:46:23 +0800
 categories: android
+node: android
 ---
 
 ViewPager 允许用户左右翻页。

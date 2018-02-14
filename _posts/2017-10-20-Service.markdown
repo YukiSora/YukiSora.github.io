@@ -3,6 +3,7 @@ layout: article
 title: "Service"
 date: 2017-10-20 12:48:51 +0800
 categories: android
+node: android
 ---
 
 Service 是无界面后台执行的组件。

@@ -1,34 +1,37 @@
 @mixin a() {
   a {
-    color: white;
+    color: #FFF;
     text-decoration: none;
 
     &:hover {
-      color: #66ccff;
+      color: #66CCFF;
       text-decoration: underline;
     }
   }
 }
 
 .index {
-  min-height: 600px;
-  margin: 0px;
-  padding: 0px;
-
-  .item {
-    margin: 0px;
-    padding: 0px;
+  .items {
+    margin: 0;
+    padding: 0;
     list-style: none;
     list-style-image: none;
 
-    li {
-      margin-bottom: 20px;
-      padding: 20px;
-      font-size: 20px;
-      border-bottom: 3px solid gray;
+    .item {
+      padding: 20px 20px 40px;
+      font-size: 1.25em;
+      border-bottom: 3px solid #808080;
+
+      &:hover {
+        .title {
+          a {
+            color: #66CCFF;
+          }
+        }
+      }
 
       header {
-        margin: 20px 0px;
+        margin: 20px 0;
 
         .title {
           font-size: 2em;

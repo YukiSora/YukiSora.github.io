@@ -1,18 +1,44 @@
-#main-nav {
-  height: 700px;
-  // yande.re 284228
-  background: #444 url(/image/nav-background.png) center no-repeat;
+.main-nav {
+  position: fixed;
+  z-index: 10;
+  height: 100vh;
+  width: 100vw;
+  left: 0;
+  top: 0;
+  background: $bar-background-color url("/image/nav-background.jpg") center center/cover no-repeat fixed; // yande.re 284228
   font-size: 1.5em;
   transition: height 0.2s linear;
-  box-shadow: 0px 0px 2px gray;
+  box-shadow: 0 10px 20px rgba($shadow-color, .19), 0 6px 6px rgba($shadow-color, .23);
 
-  // nav bar
+  &:before{
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: $bar-background-color;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+
+  &.shrink {
+    height: 50px;
+
+    .nav {
+      animation: 1s fade-in;
+    }
+  }
+
+  &.shrink:before {
+    opacity: 1;
+  }
+
   .nav-item {
     a {
       position: relative;
-      color: white;
+      color: #FFF;
       transition: color 0.3s ease;
-      text-decoration: none;
 
       &:before {
         position: absolute;
@@ -21,72 +47,92 @@
         bottom: 0;
         left: 0;
         content: "";
-        background-color: #fff;
+        background-color: #FFF;
         visibility: hidden;
         transform: scaleX(0);
-        transition: all 0.3s ease-in-out 0s;
+        transition: all 0.3s ease-in-out;
       }
 
       &:hover {
         color: #555;
 
         &:before {
-          background-color: #555;
+          background: #555;
           visibility: visible;
           transform: scaleX(1);
+        }
+      }
+
+      &.active {
+        &:before {
+          background: #66CCFF;
+          visibility: visible;
+          transform: scaleX(1);
+        }
+
+        &:hover {
+          color: #555;
+
+          &:before {
+            transform: translateY(3px);
+            background: #555;
+          }
         }
       }
     }
   }
 
-  &.shrink {
-    height: 50px;
-  }
-
-  // profile image and text
-  #profile {
-    margin-top: 150px;
+  .profile {
+    position: absolute;
+    top: 35%;
+    left: 25%;
+    height: 30%;
+    width: 50%;
     text-align: center;
 
-    .profile-img {
-      width: 200px;
-      border: 0xp solid gray;
-      border-radius: 200px;
-      transition: transform 0.2s ease;
+    &.display-none {
+      display: none;
+    }
 
-      &:hover {
-          animation: shak 1s infinite;
+    .profile-image-block {
+      animation: 1s fade-in;
+
+      .profile-image {
+        width: 200px;
+        border: 0;
+        border-radius: 200px;
+        cursor: pointer;
+
+        &:hover {
+          animation: 1s infinite shak;
+        }
       }
     }
 
-    .profile-text {
-      margin-top: 50px;
-      color: #ccc;
-      transition: color 0.5s ease;
+    .profile-text-block {
+      animation: 1.5s fade-in;
 
-      &:hover {
-          animation: rainbow-text 2s infinite;
+      .profile-text {
+        margin-top: 50px;
+        color: #FFF;
+
+        span:hover {
+          cursor: pointer;
+          animation: 2s infinite rainbow-text;
+        }
       }
     }
   }
-}
-
-.display-none {
-  display: none;
-}
-
-.display-block {
-  animation: fade-in 0.8s;
-  display: block;
 }
 
 @keyframes shak {
-    0%, 100% {
-        transform: rotate(15deg);
-    }
-    50% {
-        transform: rotate(-15deg);
-    }
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(20deg);
+  }
 }
 
 @keyframes rainbow-text {
@@ -111,27 +157,27 @@
   }
 
   25%, 75% {
-    color: #6677aa;
+    color: #6677AA;
   }
 
   30%, 70% {
-    color: #6688bb;
+    color: #6688BB;
   }
 
   35%, 65% {
-    color: #6699cc;
+    color: #6699CC;
   }
 
   40%, 60% {
-    color: #66aadd;
+    color: #66AADD;
   }
 
   45%, 55% {
-    color: #66bbee;
+    color: #66BBEE;
   }
 
   50% {
-    color: #66ccff;
+    color: #66CCFF;
   }
 }
 
@@ -146,5 +192,19 @@
 
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    transform: rotateY(50px);
+  }
+
+  25% {
+    transform: rotateY(50px);
+  }
+
+  100% {
+    transform: rotateY(00px);
   }
 }

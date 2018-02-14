@@ -3,6 +3,7 @@ layout: article
 title: "Java Network programming"
 date: 2016-03-31 10:10:33 +0800
 categories: development
+node: development
 ---
 
 The key points of Java Network Programming. Connect to network by using URL class, Socket class and UDP class.

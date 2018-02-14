@@ -3,6 +3,7 @@ layout: article
 title: "Cracking The Coding Interview"
 date: 2016-04-01 08:03:34 +0800
 categories: development
+node: development
 ---
 
 In order to get a good job, I need to prepare some experience for job interview. This book include 150 programming interview questions from Google.
