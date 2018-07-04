@@ -10,12 +10,12 @@ Handling DOM is one of the basic usage of JavaScript. The Document Object Model(
 
 ## 获取元素
 
-### getElementByID
+### getElementById
 
 返回指定 ID 的对象。
 
 {% highlight javascript %}
-document.getElementByID("ID");
+document.getElementById("id");
 {% endhighlight %}
 
 ### getElementsByTagName
@@ -37,7 +37,7 @@ document.getElementsByTagName("*");
 返回指定 class 的对象数组，它可以查找带有多个 class 的元素，class 顺序无影响。
 
 {% highlight javascript %}
-document.getElementsByTagName("class1 class2");
+document.getElementsByClassName("class1 class2");
 {% endhighlight %}
 
 这是 HTML5 新增的方法，可能无法使用，所以要向后兼容。
