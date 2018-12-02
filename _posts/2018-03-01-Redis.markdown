@@ -1,0 +1,569 @@
+---
+layout: article
+title: "Redis"
+date: 2018-03-01 10:29:06 +0800
+categories: development
+node: development
+---
+
+# Redis
+
+[Redis](https://github.com/antirez/redis) (Remote Dictionary Server) 是 key-value pair in-memory 数据库。虽然是键值对但是它提供了诸如 list, set, hash map 这样的复杂数据结构，所以也被成为 data structures server。因为存在内存的特性，所以读写速度很快，但是很容易丢失，不过它提供存在硬盘持久化的功能。
+
+## Key
+
+它的键是 binary safe string。除了可以使用普通字符串，使用二进制文件也是可以的。空字符串也是合法的。最大 512 MB。
+
+## Data Type
+
+### String
+
+字符串类型。
+
+#### 存取操作
+
+```
+> SET key:1 poi
+OK
+> GET key:1
+"poi"
+```
+
+`SET` 会直接覆盖原有的值，但是可以设定更新条件，`NX` 当不存在时，`XX` 当存在时。直接使用命令 `SETNX` 或者 `MSETNX` 的效果和 `NX` 一样。
+
+```
+> SET key:1 poi NX
+(nil)
+> SET key:2 poi XX
+(nil)
+```
+
+设定新的值并返回旧的值。
+
+```
+> GETSET key:1 nico
+"poi"
+> GET key:1
+"nico"
+```
+
+批量存取。
+
+```
+> MSET key:1 poi key:2 nico
+OK
+> MGET key:1 key:2
+1) "poi"
+2) "nico"
+```
+
+判断是否存在，存在返回 `1`，不存在返回 `2`。传入可变参数时，返回存在的个数。
+
+```
+> EXISTS key:1
+(integer) 1
+> EXISTS key:1 key:2 key:3
+(integer) 2
+> EXISTS key:3
+(integer) 0
+```
+
+#### 数值操作
+
+可用 `INCR`、`INCRBY`、`DECR`、`DECRBY` 对数字增减，类型为 64 位 10 进制有符号整数，当值不存在是默认设为 0。
+
+```
+> SET counter:1 1
+OK
+> GET counter:1
+"1"
+> INCR counter:1
+(integer) 2
+> INCRBY counter:1 10
+(integer) 12
+```
+
+双精度浮点数增减。用负数表示减少。
+
+```
+> INCRBYFLOAT count:1 0.1
+"1.1"
+```
+
+#### 删除操作
+
+删除键，返回删除的个数。
+
+```
+> DEL key:2
+(integer) 1
+> DEL key:3
+(integer) 0
+> DEL key:2 key:3
+(integer) 1
+```
+
+#### 设置过期
+
+`EXPIRE` 和 `PEXPIRE` 以秒和毫秒为单位设定过期时间，`TTL` 和 `PTTL` 查看剩余时间，`PERSIST` 设为持久的。过期时间是存在硬盘里的。可以使用命令 `SETEX` 和 `PSETEX` 在存数据的同时设定过期时间。
+
+```
+> EXPIRE key:1 5
+(integer) 1
+> TTL key:1
+(integer) 5
+> PERSIST key:1
+(integer) 1
+> TTL key:1
+(integer) -1
+```
+
+#### 其他操作
+
+获取子字符串。坐标范围是 (start, end)，可用负坐标。
+
+```
+> GETRANGE key:1 0 0
+"p"
+> GETRANGE key:1 -2 -1
+"oi"
+```
+
+替换子字符串。
+
+```
+> SETRANGE key:1 1 io
+(integer) 3
+> GET key:1
+"pio"
+```
+
+获取字符串长度。
+
+```
+> STRLEN key:1
+(integer) 3
+```
+
+连接字符串。
+
+```
+> APPEND key:1 poi
+(integer) 6
+> GET key:1
+"poipoi"
+```
+
+### List
+
+不存在空 list，但 list 为空时，key 会被删掉。
+
+#### 存取操作
+
+使用 `LPUSH` 和 `RPUSH` 进行插入。使用 `LPOP` 和 `RPOP` 进行弹出。使用 `LRANGE` 获取。`LPUSHX` 和 `RPUSHX` 当存在才插入。
+
+```
+> RPUSH list:1 1 2
+(integer) 2
+> LPUSH list:1 3
+(integer) 3
+> LRANGE list:1 0 2
+1) "3"
+2) "1"
+3) "2"
+> RPOP list:1
+"2"
+```
+
+使用 `BRPOP` 和 `BLPOP` 进行阻塞式获取，当 list 为空时会一直等到有值。
+
+```
+BRPOP list:1 0
+```
+
+使用 `RPOPLPUSH` 和 `BRPOPLPUSH`  从一个 list 里弹出一个值插入另一个 list。
+
+```
+> RPUSH list:1 1 2 3
+(integer) 3
+> RPOPLPUSH list:1 list:2
+"3"
+> LRANGE list:1 0 3
+1) "1"
+2) "2"
+> LRANGE list:2 0 3
+1) "3"
+```
+
+插入值。
+
+```
+> LPUSH list:1 1 3
+(integer) 2
+> LINSERT list:1 BEFORE 1 2
+(integer) 3
+> LRANGE list:1 0 3
+1) "3"
+2) "2"
+3) "1"
+```
+
+#### 删除操作
+
+删除前 N 个值。
+
+```
+> RPUSH list:1 1 1 1 1
+(integer) 4
+> LRANGE list:1 0 4
+1) "1"
+2) "1"
+3) "1"
+4) "1"
+> LREM list:1 2 1
+(integer) 2
+> LRANGE list:1 0 4
+1) "1"
+2) "1"
+```
+
+使用 `LTRIM` 进行截断。
+
+```
+> RPUSH list:1 1 2 3 4
+(integer) 4
+> LTRIM list:1 0 2
+OK
+> LRANGE list:1 0 4
+1) "1"
+2) "2"
+3) "3"
+```
+
+#### 下标操作
+
+通过下标获取值。
+
+```
+> LPUSH list:1 1 2 3
+(integer) 3
+> LINDEX list:1 0
+"3"
+```
+
+通过下标设定值。
+
+```
+> RPUSH list:1 1 2 3 4
+(integer) 4
+> LSET list:1 0 5
+OK
+> LRANGE list:1 0 4
+1) "5"
+2) "2"
+3) "3"
+4) "4"
+```
+
+#### 其他操作
+
+获取长度。
+
+```
+> LPUSH list:1 1 2 3
+(integer) 3
+> LLEN list:1
+(integer) 3
+```
+
+### Hashes
+
+使用 `HSET` 或 `HMSET` 储存，用 `HGET` 或 `HMGET` 获取。`HSETNX` 当不存在时才插入。
+
+```
+> HMSET hash:1 key:1 poi key:2 nico
+OK
+HGET hash:1 key:1
+"poi"
+```
+
+使用 `HGETALL` 返回键值穿插的数组。使用 `HKEYS` 和 `HVALS` 获取键数组和值数组。
+
+```
+> HMSET hash:1 key:1 poi key:2 nico
+OK
+> HGETALL hash:1
+1) "key:1"
+2) "poi"
+3) "key:2"
+4) "nico"
+> HKEYS hash:1
+1) "key:1"
+2) "key:2"
+> HVALS hash:1
+1) "poi"
+2) "nico"
+```
+
+获取长度。
+
+```
+> HMSET hash:1 key:1 poi key:2 nico
+OK
+> HLEN hash:1
+(integer) 2
+```
+
+可以对单数据进行 `HDEL`、`HEXISTS`、`HINCRBY `、`HINCRBYFLOAT `、`HSTRLEN ` 操作。
+
+### Set
+
+set 是无序的且唯一值的
+
+#### 存取操作
+
+使用 `SADD` 插入值。使用 `SMEMBERS` 获取值。使用 `SISMEMBER` 查看值是否存在。
+
+```
+> SADD set:1 1 2 3
+(integer) 3
+> SMEMBERS set:1
+1) "1"
+2) "2"
+3) "3"
+> SISMEMBER set:1 4
+(integer) 0
+```
+
+`SPOP` 随机弹出。`SRANDMEMBER ` 只是随机获取但不删除。
+
+```
+> SADD set:1 1 2 3 4 5
+(integer) 5
+> SPOP set:1
+"3"
+> SPOP set:1
+"5"
+```
+
+#### 移动操作
+
+```
+> SADD set:1 1
+(integer) 1
+> SADD set:2 2
+(integer) 1
+> SMOVE set:1 set:2 1
+(integer) 1
+> SMEMBERS set:1
+(empty list or set)
+> SMEMBERS set:2
+1) "1"
+2) "2"
+```
+
+#### 集合操作
+
+`SINTER` 取交集。 `SDIFF` 取差集。`SUNION` 取全集。`SINTERSTORE`、`SDIFFSTORE`、`SUNIONSTORE` 会将结果存在另一集合里。
+
+```
+> SADD set:1 1 2
+(integer) 2
+> SADD set:2 2 3
+(integer) 2
+> SINTER set:1 set:2
+1) "2"
+```
+
+#### 删除操作
+
+```
+> SADD set:1 1 2 3 4 5
+(integer) 5
+> SREM set:1 5
+(integer) 1
+> SMEMBERS set:1
+1) "1"
+2) "2"
+3) "3"
+4) "4"
+```
+
+#### 其他操作
+
+获取数量。
+
+```
+> SADD set:1 1 2 3 4 5
+(integer) 5
+> SCARD set:1
+(integer) 5
+```
+
+### Sorted Set
+
+sort set 是有排序特性的 set。
+
+#### 存取操作
+
+使用 `ZADD` 插入。使用 `ZRANGE` 或者 `ZREVRANGE` 获取。`WITHSCORES` 选项可以同时获取下标。
+
+```
+> ZADD set:1 1 poi 2 nico
+(integer) 2
+> ZRANGE set:1 0 1
+1) "poi"
+2) "nico"
+```
+
+`ZRANGEBYSCORE` 或 `ZREVRANGEBYSCORE  ` 范围获取。
+
+```
+> ZADD set:1 1 a 2 b 3 c 4 d 5 e
+(integer) 5
+> ZRANGEBYSCORE set:1 1 3
+1) "a"
+2) "b"
+3) "c"
+```
+
+`ZRANGEBYLEX`  或者 `ZREVRANGEBYLEX ` 字符范围获取。
+
+```
+> ZADD set:1 1 a 2 b 3 c 4 d 5 e
+(integer) 5
+> ZRANGEBYLEX set:1 [a (c
+1) "a"
+2) "b"
+```
+
+提升下标。
+
+```
+> ZADD set:1 1 poi 2 nico
+(integer) 2
+> ZINCRBY set:1 2 poi
+"3"
+> ZRANGE set:1 0 1 WITHSCORES
+1) "nico"
+2) "2"
+3) "poi"
+4) "3"
+
+```
+
+#### 集合操作
+
+`ZUNIONSTORE`、`ZINTERSTORE` 取全集和交集后按权重相加存入另一个集合里。
+
+```
+> ZADD set:1 1 a 2 b 3 c
+(integer) 3
+> ZADD set:2 1 c 2 d 3 e
+(integer) 3
+> ZUNIONSTORE set:3 2 set:1 set:2 WEIGHTS 1 10
+(integer) 5
+> ZRANGE set:3 0 -1 WITHSCORES
+ 1) "a"
+ 2) "1"
+ 3) "b"
+ 4) "2"
+ 5) "c"
+ 6) "13"
+ 7) "d"
+ 8) "20"
+ 9) "e"
+10) "30"
+```
+
+#### 删除操作
+
+删除和 set 类似但是多了 `ZREMRANGEBYLEX `、`ZREMRANGEBYRANK `、`ZREMRANGEBYSCORE ` 特性操作。
+
+#### 其他操作
+
+和 set 一样可以使用 `ZCARD` 获取数量。也可以使用 `ZCOUNT` 获取范围内的数量。
+
+```
+> ZADD set:1 1 a 2 b 3 c 4 d 5 e
+(integer) 5
+> ZCOUNT set:1 1 3
+(integer) 3
+```
+
+字符范围数量。
+
+```
+> ZADD set:1 1 a 2 b 3 c 4 d 5 e
+(integer) 5
+> ZLEXCOUNT set:1 (a [c
+(integer) 2
+```
+
+`ZRANK`  或者 `ZREVRANK ` 获取排序。
+
+```
+> ZADD set:1 1 poi 2 nico
+(integer) 2
+> ZRANK set:1 poi
+(integer) 0
+```
+
+获取下标。
+
+```
+> ZADD set:1 1 poi 2 nico
+(integer) 2
+> ZSCORE set:1 poi
+"1"
+```
+
+### HyperLogLog
+
+像 set 一样记录数据数量但不保存数据本身。
+
+```
+> PFADD hill:1 poi nico
+(integer) 1
+> PFADD hill:1 poi
+(integer) 0
+> PFCOUNT hill:1
+(integer) 2
+```
+
+## Pipelining
+
+常规的 client-server 模式，大量 client 请求 server 响应过程，会因为缓慢的网络而浪费 redis 每秒 10 万次读操作的优势。Pipelining 技术把多个请求合并为一次网络请求大大提升了效率。
+
+## Pub/Sub
+
+发布/订阅消息，在频道里发布的消息，所以订阅了此频道的客户端都会收到。
+
+## LRU cache
+
+作为缓存使用时，可以通过设置内存上限，redis 会用 LRU 模式清除旧的缓存。
+
+## Transactions
+
+Redis 的事务，会保证请求是顺序执行且不会插入其他请求，但报错不回终止且没有回滚机制，且和持久性不沾边。
+
+```
+> MULTI
+OK
+> DEL key:1
+QUEUED
+> SET key:1 poi
+QUEUED
+> EXEC
+1) (integer) 1
+2) OK
+```
+
+## Partitioning
+
+Query routing 随机访问一个节点，由那个节点转发到正确的节点。实现有：[Redis cluster](https://redis.io/topics/cluster-tutorial)。
+
+Proxy 将请求发送至代理，代理将请求转发至正确的节点上。实现有：[twemproxy](https://github.com/twitter/twemproxy)。
+
+
+---
